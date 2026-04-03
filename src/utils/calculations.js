@@ -36,9 +36,6 @@ export function calculate(mode, rawValue) {
     tiendas = Math.ceil(value / 110);
   } else if (mode === 'tiendas') {
     tiendas = Math.ceil(value);
-  } else if (mode === 'bolsas') {
-    tiendas = Math.floor((value * 200) / 220);
-    if (tiendas <= 0) tiendas = 0;
   }
 
   const litrosTotales = tiendas * 110;

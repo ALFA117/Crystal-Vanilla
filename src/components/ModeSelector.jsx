@@ -17,14 +17,7 @@ const MODES = [
     placeholder: 'Ej. 26',
     unit: 'tiendas',
   },
-  {
-    id: 'bolsas',
-    emoji: '🛍️',
-    label: 'Tengo bolsas',
-    description: 'Ingresa las bolsas de botellas disponibles',
-    placeholder: 'Ej. 5',
-    unit: 'bolsas',
-  },
+
 ];
 
 export default function ModeSelector({ activeMode, onModeChange }) {
