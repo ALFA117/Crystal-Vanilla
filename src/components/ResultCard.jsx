@@ -1,72 +1,104 @@
 import { motion } from 'framer-motion';
 import { useAnimatedCounter } from '../hooks/useAnimatedCounter';
 
-const CARD_COLORS = [
-  { bg: '#FFFDE7', accent: '#F5C842' },
-  { bg: '#FFF8E1', accent: '#E8A020' },
-  { bg: '#FFFDF0', accent: '#D4A017' },
-  { bg: '#FFF9E6', accent: '#F0B429' },
-  { bg: '#FFFDE7', accent: '#F5C842' },
-  { bg: '#FFF8E1', accent: '#E8A020' },
-  { bg: '#FFFDF0', accent: '#D4A017' },
-  { bg: '#FFF9E6', accent: '#F0B429' },
-  { bg: '#FFFDE7', accent: '#F5C842' },
-  { bg: '#FFF8E1', accent: '#E8A020' },
-];
+/** Formatea el decimal exacto: "12.1", "12" → "12 ✓ exacto" */
+function fmtExact(exact) {
+  const rounded = parseFloat(exact.toFixed(4));
+  const isWhole = Number.isInteger(rounded);
+  if (isWhole) return `${rounded.toLocaleString('es-MX')} ✓`;
+  return parseFloat(exact.toFixed(3)).toLocaleString('es-MX', {
+    maximumFractionDigits: 3,
+  });
+}
 
-export default function ResultCard({ icon, label, unit, value, index }) {
+// ── Simple card (tiendas, litros, cajas totales, etc.) ──────────────────────
+export function SimpleCard({ icon, label, unit, value, index, accentColor }) {
   const animated = useAnimatedCounter(value, 900);
 
   return (
     <motion.div
-      className="cv-result-card"
-      style={{
-        '--card-bg':     CARD_COLORS[index % CARD_COLORS.length].bg,
-        '--card-accent': CARD_COLORS[index % CARD_COLORS.length].accent,
-      }}
-      initial={{ opacity: 0, scale: 0.7, y: 30 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{
-        type: 'spring',
-        stiffness: 280,
-        damping: 22,
-        delay: index * 0.07,
-      }}
-      whileHover={{
-        scale: 1.04,
-        y: -4,
-        boxShadow: '0 12px 32px rgba(212,160,23,0.35)',
-        transition: { duration: 0.2 },
-      }}
-      layout
+      className="cv-card cv-card--simple"
+      style={{ '--card-accent': accentColor }}
+      initial={{ opacity: 0, scale: 0.75, y: 24 }}
+      animate={{ opacity: 1, scale: 1,    y: 0  }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.06 }}
+      whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
     >
+      <span className="cv-card__icon">{icon}</span>
+      <p   className="cv-card__label">{label}</p>
       <motion.span
-        className="cv-result-card__icon"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', delay: index * 0.07 + 0.15 }}
+        className="cv-card__number"
+        key={value}
+        initial={{ scale: 1.25, color: '#E8A020' }}
+        animate={{ scale: 1,    color: '#3B2A1A' }}
+        transition={{ duration: 0.35 }}
       >
-        {icon}
+        {animated.toLocaleString('es-MX')}
       </motion.span>
+      <span className="cv-card__unit">{unit}</span>
+      <div  className="cv-card__bar" />
+    </motion.div>
+  );
+}
 
-      <p className="cv-result-card__label">{label}</p>
+// ── Package card (paquetes, bolsas, rollos) — con desglose ─────────────────
+export function PkgCard({ icon, label, unit, desc, pkgData, index, accentColor }) {
+  const { needed, exact, usedInLast, leftover, itemUnit, isExact } = pkgData;
+  const animated = useAnimatedCounter(needed, 900);
 
-      <div className="cv-result-card__value-row">
-        <motion.span
-          className="cv-result-card__number"
-          key={value}
-          initial={{ scale: 1.3, color: '#E8A020' }}
-          animate={{ scale: 1, color: '#3B2A1A' }}
-          transition={{ duration: 0.4 }}
-        >
-          {animated.toLocaleString('es-MX')}
-        </motion.span>
+  return (
+    <motion.div
+      className="cv-card cv-card--pkg"
+      style={{ '--card-accent': accentColor }}
+      initial={{ opacity: 0, scale: 0.75, y: 24 }}
+      animate={{ opacity: 1, scale: 1,    y: 0  }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.06 }}
+      whileHover={{ scale: 1.03, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
+    >
+      <span className="cv-card__icon">{icon}</span>
+      <p    className="cv-card__label">{label}</p>
+
+      <motion.span
+        className="cv-card__number"
+        key={needed}
+        initial={{ scale: 1.25, color: '#E8A020' }}
+        animate={{ scale: 1,    color: '#3B2A1A' }}
+        transition={{ duration: 0.35 }}
+      >
+        {animated.toLocaleString('es-MX')}
+      </motion.span>
+      <span className="cv-card__unit">{unit}</span>
+
+      {desc && <span className="cv-card__desc">{desc}</span>}
+
+      {/* ── Desglose ── */}
+      <div className="cv-card__breakdown">
+        <div className="cv-card__breakdown-row cv-card__breakdown-row--exact">
+          <span className="cv-card__bd-label">Exacto</span>
+          <span className="cv-card__bd-val">
+            {fmtExact(exact)} {isExact ? '' : unit}
+          </span>
+        </div>
+
+        {!isExact && (
+          <>
+            <div className="cv-card__breakdown-row cv-card__breakdown-row--used">
+              <span className="cv-card__bd-label">Usas del último</span>
+              <span className="cv-card__bd-val cv-card__bd-val--used">
+                {usedInLast.toLocaleString('es-MX')} {itemUnit}
+              </span>
+            </div>
+            <div className="cv-card__breakdown-row cv-card__breakdown-row--left">
+              <span className="cv-card__bd-label">Sobran</span>
+              <span className="cv-card__bd-val cv-card__bd-val--left">
+                {leftover.toLocaleString('es-MX')} {itemUnit}
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
-      <span className="cv-result-card__unit">{unit}</span>
-
-      {/* Bottom accent bar */}
-      <div className="cv-result-card__bar" />
+      <div className="cv-card__bar" />
     </motion.div>
   );
 }
