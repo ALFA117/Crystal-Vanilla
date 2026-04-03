@@ -119,8 +119,7 @@ export default function ResultsGrid({ results, mode, inputValue }) {
             {[
               ['1 tienda',              '11 cajas · 110 litros · 220 botellas'],
               ['1 caja',                '10 litros · 20 botellas'],
-              ['1 paquete de cajas',    '20 cajas'],
-              ['1 paquete de charolas', '20 charolas'],
+              ['1 paquete de cajas',    '20 cajas (= charolas, es lo mismo)'],
               ['1 bolsa de botellas',   '200 botellas'],
               ['1 rollo de etiquetas',  '1,000 etiquetas'],
               ['1 paquete etiquetas',   '3 rollos = 3,000 etiquetas'],

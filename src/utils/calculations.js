@@ -44,19 +44,16 @@ export function calculate(mode, rawValue) {
   const litrosTotales = tiendas * 110;
   const botellasTotal = tiendas * 220;
   const cajasTotal    = tiendas * 11;
-  const charolas      = tiendas;
 
   return {
     // ── Simples ────────────────────────────────────────────────
     tiendas,
     litrosTotales,
     cajasTotal,
-    charolas,
     botellasTotal,
 
     // ── Con desglose de paquetes ────────────────────────────────
     paquetesCajas:     pkgInfo(cajasTotal,    20,   'cajas'),
-    paquetesCharolas:  pkgInfo(charolas,      20,   'charolas'),
     bolsasBotellas:    pkgInfo(botellasTotal, 200,  'botellas'),
     rollosEtiquetas:   pkgInfo(botellasTotal, 1000, 'etiquetas'),
     paquetesEtiquetas: pkgInfo(botellasTotal, 3000, 'etiquetas'),
@@ -84,22 +81,12 @@ export const SECTIONS = [
   },
   {
     id: 'cajas',
-    title: '📦 Cajas',
+    title: '📦 Cajas (Charolas)',
     color: '#8B5E1A',
     items: [
-      { type: 'simple', key: 'cajasTotal',    icon: '📦', label: 'Cajas Totales',    unit: 'cajas'   },
+      { type: 'simple', key: 'cajasTotal',    icon: '📦', label: 'Cajas Totales',     unit: 'cajas'   },
       { type: 'pkg',    key: 'paquetesCajas', icon: '📫', label: 'Paquetes de Cajas', unit: 'paquetes',
-        desc: '20 cajas por paquete' },
-    ],
-  },
-  {
-    id: 'charolas',
-    title: '🗂️ Charolas',
-    color: '#6B4C2A',
-    items: [
-      { type: 'simple', key: 'charolas',         icon: '🗂️', label: 'Charolas Totales',    unit: 'charolas' },
-      { type: 'pkg',    key: 'paquetesCharolas',  icon: '📦', label: 'Paquetes de Charolas', unit: 'paquetes',
-        desc: '20 charolas por paquete' },
+        desc: '20 cajas (charolas) por paquete' },
     ],
   },
   {
