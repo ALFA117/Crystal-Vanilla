@@ -1,0 +1,610 @@
+/* ============================================================
+   Crystal Vanilla — App Styles
+   Palette: ivory #FFFFF0 · vanilla #F5C842 · accent #E8A020
+            gold #D4A017 · dark text #3B2A1A · card #FFFDE7
+   ============================================================ */
+
+/* ── Root layout ─────────────────────────────────────────── */
+.cv-app {
+  min-height: 100vh;
+  background: #FFFFF0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.cv-app__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.cv-header {
+  background: linear-gradient(135deg, #3B2A1A 0%, #5C3D1E 40%, #3B2A1A 100%);
+  padding: 2rem 1.5rem 1.6rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cv-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(245,200,66,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 50%, rgba(212,160,23,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cv-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cv-header__icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(245,200,66,0.6));
+  user-select: none;
+}
+
+.cv-header__icon--right {
+  transform: scaleX(-1);
+}
+
+.cv-header__text {
+  text-align: center;
+}
+
+.cv-header__title {
+  font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: #F5C842;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-shadow: 0 2px 16px rgba(212,160,23,0.5);
+  margin: 0;
+}
+
+.cv-header__subtitle {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: clamp(0.95rem, 2.5vw, 1.35rem);
+  font-weight: 400;
+  color: #FAF7F0;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+  opacity: 0.9;
+}
+
+.cv-header__divider {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #F5C842 20%, #E8A020 50%, #F5C842 80%, transparent);
+  margin-top: 1.4rem;
+  transform-origin: left;
+}
+
+/* ── Main content ─────────────────────────────────────────── */
+.cv-main {
+  flex: 1;
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+/* ── Calculator card ─────────────────────────────────────── */
+.cv-calculator-card {
+  background: #FAF7F0;
+  border: 1.5px solid #F0B429;
+  border-radius: 20px;
+  padding: 2rem 2rem 2.2rem;
+  box-shadow:
+    0 4px 24px rgba(212,160,23,0.18),
+    0 1px 4px rgba(59,42,26,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.cv-calculator-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D4A017, #F5C842, #E8A020, #F5C842, #D4A017);
+  border-radius: 20px 20px 0 0;
+}
+
+/* ── Mode selector ───────────────────────────────────────── */
+.cv-mode-selector {
+  margin-bottom: 1.8rem;
+}
+
+.cv-mode-selector__label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6B4C2A;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.cv-mode-selector__tabs {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.cv-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.7rem 1.3rem;
+  border: 1.5px solid #F0B429;
+  border-radius: 14px;
+  background: #FFFDE7;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 120px;
+  color: #6B4C2A;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.cv-tab:focus-visible {
+  outline: 2.5px solid #F5C842;
+  outline-offset: 2px;
+}
+
+.cv-tab--active {
+  background: #3B2A1A;
+  border-color: #F5C842;
+  color: #F5C842;
+}
+
+.cv-tab__emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.cv-tab__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.cv-tab__indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  border: 2px solid #F5C842;
+  pointer-events: none;
+}
+
+/* ── Input section ───────────────────────────────────────── */
+.cv-input-section {
+  /* wraps animated content */
+}
+
+.cv-input-section__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cv-input-section__desc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  color: #6B4C2A;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* ── Input form ──────────────────────────────────────────── */
+.cv-input-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.cv-input-form__field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  border: 2px solid #F0B429;
+  border-radius: 14px;
+  background: #FFFFF0;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 2px 10px rgba(212,160,23,0.12);
+}
+
+.cv-input-form__field:focus-within {
+  border-color: #E8A020;
+  box-shadow: 0 0 0 4px rgba(245,200,66,0.2), 0 2px 10px rgba(212,160,23,0.18);
+}
+
+.cv-input-form__prefix {
+  padding: 0 0.9rem;
+  font-size: 1.4rem;
+  line-height: 1;
+  background: linear-gradient(135deg, #F5C842, #E8A020);
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.cv-input-form__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #3B2A1A;
+  padding: 0.75rem 0.5rem;
+  min-width: 0;
+  -moz-appearance: textfield;
+}
+
+.cv-input-form__input::-webkit-outer-spin-button,
+.cv-input-form__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cv-input-form__input::placeholder {
+  color: #C8A87A;
+  font-weight: 400;
+}
+
+.cv-input-form__unit {
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6B4C2A;
+  white-space: nowrap;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cv-input-form__error {
+  color: #C0392B;
+  font-size: 0.88rem;
+  background: rgba(192,57,43,0.08);
+  border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+}
+
+/* ── Calculate button ─────────────────────────────────────── */
+.cv-btn-calculate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2.8rem;
+  background: linear-gradient(135deg, #F5C842 0%, #E8A020 50%, #D4A017 100%);
+  color: #3B2A1A;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 18px rgba(212,160,23,0.4);
+}
+
+.cv-btn-calculate:focus-visible {
+  outline: 3px solid #F5C842;
+  outline-offset: 3px;
+}
+
+.cv-btn-calculate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 4px 18px rgba(212,160,23,0.4); }
+  50%       { box-shadow: 0 6px 30px rgba(212,160,23,0.75), 0 0 60px rgba(245,200,66,0.2); }
+}
+
+.cv-btn-calculate:hover {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* ── Results section ─────────────────────────────────────── */
+.cv-results {
+  margin-top: 2.8rem;
+}
+
+.cv-results__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, transparent, #F0B429, #D4A017, #F0B429, transparent) 1;
+}
+
+.cv-results__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+  font-weight: 700;
+  color: #3B2A1A;
+  letter-spacing: 0.03em;
+}
+
+.cv-results__title-decor {
+  color: #D4A017;
+  font-size: 0.85em;
+}
+
+/* ── PDF button ──────────────────────────────────────────── */
+.cv-btn-pdf {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.4rem;
+  background: #3B2A1A;
+  color: #F5C842;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1.5px solid #D4A017;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.cv-btn-pdf:focus-visible {
+  outline: 2.5px solid #F5C842;
+  outline-offset: 2px;
+}
+
+/* ── Results grid ─────────────────────────────────────────── */
+.cv-results__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.2rem;
+}
+
+/* ── Result card ─────────────────────────────────────────── */
+.cv-result-card {
+  background: var(--card-bg, #FFFDE7);
+  border: 1.5px solid #F0B429;
+  border-radius: 18px;
+  padding: 1.3rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  box-shadow:
+    0 3px 14px rgba(212,160,23,0.16),
+    0 1px 3px rgba(59,42,26,0.07),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.cv-result-card__icon {
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(212,160,23,0.45));
+}
+
+.cv-result-card__label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.82rem;
+  color: #6B4C2A;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.cv-result-card__value-row {
+  margin: 0.15rem 0;
+}
+
+.cv-result-card__number {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  color: #3B2A1A;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  display: block;
+}
+
+.cv-result-card__unit {
+  font-size: 0.72rem;
+  color: #8B6A3E;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+.cv-result-card__bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-accent, #F5C842), transparent);
+}
+
+/* ── Reference table ─────────────────────────────────────── */
+.cv-reference {
+  background: #FAF7F0;
+  border: 1.5px solid #F0B429;
+  border-radius: 16px;
+  padding: 1.5rem 1.8rem;
+  box-shadow: 0 2px 12px rgba(212,160,23,0.12);
+}
+
+.cv-reference__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  color: #3B2A1A;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.cv-reference__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.4rem 2rem;
+}
+
+.cv-reference__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed rgba(212,160,23,0.3);
+  font-size: 0.88rem;
+}
+
+.cv-reference__key {
+  font-weight: 700;
+  color: #3B2A1A;
+  white-space: nowrap;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  min-width: 130px;
+}
+
+.cv-reference__val {
+  color: #6B4C2A;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.cv-footer {
+  background: #3B2A1A;
+  padding: 1.5rem 1.5rem 1.8rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.cv-footer__divider {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 0.7rem;
+}
+
+.cv-footer__ornament {
+  color: #D4A017;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.cv-footer__text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.95rem;
+  color: #F5C842;
+  letter-spacing: 0.06em;
+}
+
+.cv-footer__copy {
+  font-family: sans-serif;
+}
+
+.cv-footer__sub {
+  font-size: 0.75rem;
+  color: #8B7355;
+  margin-top: 0.4rem;
+  letter-spacing: 0.04em;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Responsive adjustments ──────────────────────────────── */
+@media (max-width: 640px) {
+  .cv-main {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .cv-calculator-card {
+    padding: 1.4rem 1.2rem 1.6rem;
+  }
+
+  .cv-mode-selector__tabs {
+    gap: 0.5rem;
+  }
+
+  .cv-tab {
+    min-width: 90px;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .cv-results__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .cv-result-card {
+    padding: 1rem 0.75rem 0.9rem;
+  }
+
+  .cv-reference__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-results__header {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cv-btn-calculate {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .cv-results__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cv-results__grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
