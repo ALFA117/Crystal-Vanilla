@@ -35,9 +35,20 @@ function txt(doc, rgb, type = 'text') {
   else doc.setFillColor(...rgb);
 }
 
+/** Elimina emojis y caracteres no soportados por las fuentes estándar de jsPDF */
+function safe(str) {
+  return (str || '')
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')  // emojis SMP (🌿📦🧴…)
+    .replace(/[\u{2600}-\u{27BF}]/gu,    '')  // símbolos misc / dingbats
+    .replace(/\uFE0F/g, '')                   // variation selector
+    .replace(/\u200D/g, '')                   // zero-width joiner
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function fmtExact(exact) {
   const rounded = parseFloat(exact.toFixed(4));
-  if (Number.isInteger(rounded)) return `${rounded.toLocaleString('es-MX')} ✓`;
+  if (Number.isInteger(rounded)) return `${rounded.toLocaleString('es-MX')} (exacto)`;
   return parseFloat(exact.toFixed(3)).toLocaleString('es-MX', { maximumFractionDigits: 3 });
 }
 
@@ -54,7 +65,7 @@ export function exportToPDF(results, mode, inputValue) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(24);
   txt(doc, C.white);
-  doc.text('🌿 Crystal Vanilla', W / 2, 13, { align: 'center' });
+  doc.text('Crystal Vanilla', W / 2, 13, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(11);
@@ -107,7 +118,7 @@ export function exportToPDF(results, mode, inputValue) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     txt(doc, C.white);
-    doc.text(section.title, M + 3, y + 5);
+    doc.text(safe(section.title), M + 3, y + 5);
     y += 9;
 
     // Cards
@@ -137,7 +148,7 @@ export function exportToPDF(results, mode, inputValue) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       txt(doc, C.medium);
-      doc.text(`${item.icon}  ${item.label}`, cx + 4, cy + 6);
+      doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 6);
 
       if (item.type === 'simple') {
         const val = results[item.key];
@@ -225,7 +236,7 @@ export function exportToPDF(results, mode, inputValue) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   txt(doc, C.white);
-  doc.text('📐  Tabla de Equivalencias', M + 3, y + 5);
+  doc.text('Tabla de Equivalencias', M + 3, y + 5);
   y += 9;
 
   const refs = [
