@@ -100,6 +100,21 @@
   padding: 2.5rem 1.5rem 3rem;
 }
 
+/* ── Top row: calculator + inventario ────────────────────── */
+.cv-top-row {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 0;
+}
+
+@media (max-width: 860px) {
+  .cv-top-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Calculator card ─────────────────────────────────────── */
 .cv-calculator-card {
   background: #FAF7F0;
@@ -549,14 +564,7 @@
   color: #C0392B;
 }
 
-/* ── Litros info cards ───────────────────────────────────── */
-.cv-litros-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-top: 0.65rem;
-}
-
+/* ── Litros info cards (viven dentro de cv-section__grid) ─── */
 .cv-litros-card {
   border-radius: 16px;
   padding: 1rem 0.9rem 0.9rem;
@@ -612,11 +620,11 @@
 
 .cv-litros-card__number {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.02em;
-  margin: 0.15rem 0 0;
+  letter-spacing: -0.03em;
+  margin: 0.2rem 0 0;
 }
 
 .cv-litros-card__unit {
@@ -635,9 +643,6 @@
   font-family: 'Inter', sans-serif;
 }
 
-@media (max-width: 400px) {
-  .cv-litros-cards { grid-template-columns: 1fr; }
-}
 
 /* ── Reference table ─────────────────────────────────────── */
 .cv-reference {
@@ -683,6 +688,122 @@
 .cv-reference__val {
   color: #6B4C2A;
   font-family: 'Inter', sans-serif;
+}
+
+/* ── Inventario ──────────────────────────────────────────── */
+.cv-inventario {
+  background: #FAF7F0;
+  border: 1.5px solid #F0B429;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 4px 24px rgba(212,160,23,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.cv-inventario::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #D4A017, #F5C842, #E8A020, #F5C842, #D4A017);
+}
+
+.cv-inventario__header {
+  padding: 1.1rem 1.4rem 0.8rem;
+  border-bottom: 1px solid rgba(240,180,41,0.35);
+}
+
+.cv-inventario__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3B2A1A;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.cv-inventario__subtitle {
+  font-size: 0.75rem;
+  color: #8B6A3E;
+  font-family: 'Inter', sans-serif;
+  margin-top: 0.2rem;
+  letter-spacing: 0.04em;
+}
+
+.cv-inventario__body {
+  padding: 1rem 1.4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  filter: blur(1.5px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.6;
+}
+
+.cv-inventario__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cv-inventario__label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  color: #6B4C2A;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.cv-inventario__input {
+  border: 1.5px solid #F0B429;
+  border-radius: 10px;
+  background: #FFFFF0;
+  padding: 0.55rem 0.8rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3B2A1A;
+  width: 100%;
+  outline: none;
+}
+
+/* Overlay "Próximamente" */
+.cv-inventario__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(250, 247, 240, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+.cv-inventario__coming-soon {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #D4A017;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 8px rgba(212,160,23,0.3);
+}
+
+.cv-inventario__coming-badge {
+  font-size: 0.7rem;
+  font-family: 'Inter', sans-serif;
+  color: #8B6A3E;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(212,160,23,0.15);
+  border: 1px solid rgba(212,160,23,0.4);
+  border-radius: 50px;
+  padding: 0.2rem 0.8rem;
 }
 
 /* ── Footer ──────────────────────────────────────────────── */
