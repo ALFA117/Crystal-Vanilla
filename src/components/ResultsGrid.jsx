@@ -120,6 +120,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                 {/* Tarjetas de litros dentro del mismo grid */}
                 {section.id === 'extracto' && mode === 'litros' && results.litrosFaltantes != null && (
                   <>
+                    {/* Tarjeta: FALTAN */}
                     <motion.div
                       className={`cv-litros-card cv-litros-card--warn ${results.litrosFaltantes === 0 ? 'cv-litros-card--exact' : ''}`}
                       initial={{ opacity: 0, scale: 0.85, y: 16 }}
@@ -130,15 +131,16 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                       <span className="cv-litros-card__badge">
                         {results.litrosFaltantes === 0 ? '✓' : '!'}
                       </span>
-                      <p className="cv-litros-card__label">
-                        {results.litrosFaltantes === 0 ? 'Litros exactos' : (
-                          <>Faltan para tienda <span className="cv-litros-card__label-num">{results.tiendas}</span></>
-                        )}
-                      </p>
+                      {results.litrosFaltantes === 0 ? (
+                        <p className="cv-litros-card__label">Litros exactos</p>
+                      ) : (
+                        <>
+                          <p className="cv-litros-card__label">Faltan para tienda</p>
+                          <span className="cv-litros-card__label-num">{results.tiendas}</span>
+                        </>
+                      )}
                       <span className="cv-litros-card__number">
-                        {results.litrosFaltantes === 0
-                          ? '0'
-                          : results.litrosFaltantes.toLocaleString('es-MX')}
+                        {results.litrosFaltantes.toLocaleString('es-MX')}
                       </span>
                       <span className="cv-litros-card__unit">litros</span>
                       {results.litrosFaltantes > 0 && (
@@ -149,6 +151,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                       )}
                     </motion.div>
 
+                    {/* Tarjeta: SOBRAN */}
                     <motion.div
                       className={`cv-litros-card cv-litros-card--ok ${results.litrosSobrantes === 0 ? 'cv-litros-card--exact' : ''}`}
                       initial={{ opacity: 0, scale: 0.85, y: 16 }}
@@ -159,11 +162,15 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                       <span className="cv-litros-card__badge">
                         {results.litrosSobrantes === 0 ? '✓' : '+'}
                       </span>
-                      <p className="cv-litros-card__label">
-                        {results.litrosSobrantes === 0 ? 'Sin excedente' : (
-                          <>Sobran con <span className="cv-litros-card__label-num">{results.tiendasCompletas}</span> tiendas</>
-                        )}
-                      </p>
+                      {results.litrosSobrantes === 0 ? (
+                        <p className="cv-litros-card__label">Sin excedente</p>
+                      ) : (
+                        <>
+                          <p className="cv-litros-card__label">Sobran con</p>
+                          <span className="cv-litros-card__label-num">{results.tiendasCompletas}</span>
+                          <p className="cv-litros-card__label">tiendas</p>
+                        </>
+                      )}
                       <span className="cv-litros-card__number">
                         {results.litrosSobrantes.toLocaleString('es-MX')}
                       </span>

@@ -62,7 +62,7 @@ export default function App() {
                   transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
                 >
                   <ModeSelector activeMode={mode} onModeChange={handleModeChange} />
-                  <InputSection mode={mode} onCalculate={handleCalculate} />
+                  <InputSection key={mode} mode={mode} onCalculate={handleCalculate} />
                 </motion.div>
 
                 <div id="cv-results-anchor" />

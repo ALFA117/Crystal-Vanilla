@@ -23,9 +23,14 @@ export default function InputSection({ mode, onCalculate }) {
   };
 
   const handleChange = (e) => {
-    const v = e.target.value.replace(/[^0-9.]/g, '');
+    // Solo enteros — elimina cualquier carácter que no sea dígito
+    const v = e.target.value.replace(/[^0-9]/g, '');
     setValue(v);
     if (error) setError('');
+  };
+
+  const blockDecimals = (e) => {
+    if (e.key === '.' || e.key === ',') e.preventDefault();
   };
 
   return (
@@ -53,10 +58,12 @@ export default function InputSection({ mode, onCalculate }) {
                 type="number"
                 inputMode="numeric"
                 min="1"
+                step="1"
                 className="cv-input-form__input"
                 placeholder={currentMode?.placeholder}
                 value={value}
                 onChange={handleChange}
+                onKeyDown={blockDecimals}
                 aria-label={currentMode?.description}
               />
               <span className="cv-input-form__unit">{currentMode?.unit}</span>
