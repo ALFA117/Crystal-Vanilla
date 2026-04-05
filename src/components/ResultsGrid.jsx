@@ -135,8 +135,9 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                         <p className="cv-litros-card__label">Litros exactos</p>
                       ) : (
                         <>
-                          <p className="cv-litros-card__label">Faltan para tienda</p>
+                          <p className="cv-litros-card__label">Para completar</p>
                           <span className="cv-litros-card__label-num">{results.tiendas}</span>
+                          <p className="cv-litros-card__label">tiendas te faltan</p>
                         </>
                       )}
                       <span className="cv-litros-card__number">
