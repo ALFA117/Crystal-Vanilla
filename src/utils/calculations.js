@@ -42,9 +42,18 @@ export function calculate(mode, rawValue) {
   const botellasTotal = tiendas * 220;
   const cajasTotal    = tiendas * 11;
 
-  // Diferencia de litros (solo en modo litros)
-  // Con Math.ceil, litrosTotales >= value siempre → diff >= 0
-  const litrosDiff = mode === 'litros' ? litrosTotales - value : null;
+  // ── Análisis de litros (solo modo litros) ─────────────────────
+  // litrosFaltantes: cuántos litros más se necesitan para la última tienda
+  // litrosSobrantes: cuántos litros quedan si solo haces tiendas completas
+  // Nota: litrosFaltantes + litrosSobrantes = 110 (a menos que sea exacto)
+  let litrosFaltantes = null;
+  let litrosSobrantes = null;
+  let tiendasCompletas = null;
+  if (mode === 'litros') {
+    litrosFaltantes  = litrosTotales - value;            // ≥ 0 siempre con ceil
+    tiendasCompletas = Math.floor(value / 110);
+    litrosSobrantes  = value - tiendasCompletas * 110;   // 0..109
+  }
 
   return {
     // ── Simples ────────────────────────────────────────────────
@@ -52,7 +61,9 @@ export function calculate(mode, rawValue) {
     litrosTotales,
     cajasTotal,
     botellasTotal,
-    litrosDiff,          // null | 0 (exacto) | >0 (faltan litros)
+    litrosFaltantes,    // null | 0 (exacto) | >0 (faltan litros)
+    litrosSobrantes,    // null | 0 (exacto) | >0 (litros que sobran)
+    tiendasCompletas,   // null | number
 
     // ── Con desglose de paquetes ────────────────────────────────
     paquetesCajas:   pkgInfo(cajasTotal,    20,   'cajas'),

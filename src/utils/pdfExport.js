@@ -108,31 +108,48 @@ export function exportToPDF(results, mode, inputValue) {
 
   y += 20;
 
-  // ── Aviso de litros faltantes (solo modo litros) ───────────────────────────
-  if (mode === 'litros' && results.litrosDiff != null) {
-    if (results.litrosDiff === 0) {
-      txt(doc, [39, 174, 96], 'fill');
-      doc.roundedRect(M, y, CW, 9, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.5);
-      txt(doc, C.white);
-      doc.text(
-        `Tienes exactamente los litros necesarios para ${results.tiendas} tiendas.`,
-        M + 4, y + 6
-      );
-    } else {
-      txt(doc, [192, 100, 30], 'fill');
-      doc.roundedRect(M, y, CW, 9, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.5);
-      txt(doc, C.white);
-      doc.text(
-        `Te faltan ${results.litrosDiff.toLocaleString('es-MX')} litros para completar las ${results.tiendas} tiendas ` +
-        `(tienes ${Number(inputValue).toLocaleString('es-MX')}, necesitas ${results.litrosTotales.toLocaleString('es-MX')}).`,
-        M + 4, y + 6
-      );
-    }
-    y += 13;
+  // ── Tarjetas de litros (solo modo litros) ─────────────────────────────────
+  if (mode === 'litros' && results.litrosFaltantes != null) {
+    const halfW = (CW - 4) / 2;
+
+    // Tarjeta FALTAN (izquierda)
+    const warnColor = results.litrosFaltantes === 0 ? [39, 174, 96] : [192, 100, 30];
+    txt(doc, warnColor, 'fill');
+    doc.roundedRect(M, y, halfW, 18, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    txt(doc, C.white);
+    const warnLabel = results.litrosFaltantes === 0
+      ? 'Litros exactos'
+      : `Faltan para tienda ${results.tiendas}`;
+    doc.text(warnLabel, M + 3, y + 5);
+    doc.setFontSize(14);
+    doc.text(
+      results.litrosFaltantes.toLocaleString('es-MX'),
+      M + 3, y + 13
+    );
+    doc.setFontSize(7);
+    doc.text('litros', M + halfW - 3, y + 13, { align: 'right' });
+
+    // Tarjeta SOBRAN (derecha)
+    txt(doc, [39, 174, 96], 'fill');
+    doc.roundedRect(M + halfW + 4, y, halfW, 18, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    txt(doc, C.white);
+    const okLabel = results.litrosSobrantes === 0
+      ? 'Sin excedente'
+      : `Sobran con ${results.tiendasCompletas} tiendas`;
+    doc.text(okLabel, M + halfW + 7, y + 5);
+    doc.setFontSize(14);
+    doc.text(
+      results.litrosSobrantes.toLocaleString('es-MX'),
+      M + halfW + 7, y + 13
+    );
+    doc.setFontSize(7);
+    doc.text('litros', M + CW - 3, y + 13, { align: 'right' });
+
+    y += 22;
   }
 
   // ── Sections ──────────────────────────────────────────────────────────────

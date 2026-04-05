@@ -104,31 +104,67 @@ export default function ResultsGrid({ results, mode, inputValue }) {
                 })}
               </div>
 
-              {/* Aviso de litros faltantes — solo en sección extracto con modo litros */}
-              {section.id === 'extracto' && mode === 'litros' && results.litrosDiff != null && (
-                <motion.div
-                  className={`cv-litros-notice ${results.litrosDiff === 0 ? 'cv-litros-notice--exact' : 'cv-litros-notice--warn'}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.35 }}
-                >
-                  {results.litrosDiff === 0 ? (
-                    <>
-                      <span className="cv-litros-notice__icon">✓</span>
-                      <span>Tienes exactamente los litros necesarios para {results.tiendas} tiendas.</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="cv-litros-notice__icon">!</span>
-                      <span>
-                        Para completar las <strong>{results.tiendas} tiendas</strong> necesitas{' '}
-                        <strong>{results.litrosTotales.toLocaleString('es-MX')} litros</strong>.{' '}
-                        Te faltan <strong>{results.litrosDiff.toLocaleString('es-MX')} litros</strong>{' '}
-                        (tienes {Number(inputValue).toLocaleString('es-MX')}).
-                      </span>
-                    </>
-                  )}
-                </motion.div>
+              {/* Tarjetas de litros — solo en extracto con modo litros */}
+              {section.id === 'extracto' && mode === 'litros' && results.litrosFaltantes != null && (
+                <div className="cv-litros-cards">
+                  {/* Tarjeta: faltan */}
+                  <motion.div
+                    className={`cv-litros-card cv-litros-card--warn ${results.litrosFaltantes === 0 ? 'cv-litros-card--exact' : ''}`}
+                    initial={{ opacity: 0, scale: 0.85, y: 16 }}
+                    animate={{ opacity: 1, scale: 1,    y: 0  }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.15 }}
+                    whileHover={{ scale: 1.03, y: -3 }}
+                  >
+                    <span className="cv-litros-card__badge">
+                      {results.litrosFaltantes === 0 ? '✓' : '!'}
+                    </span>
+                    <p className="cv-litros-card__label">
+                      {results.litrosFaltantes === 0
+                        ? 'Litros exactos'
+                        : `Faltan para tienda ${results.tiendas}`}
+                    </p>
+                    <span className="cv-litros-card__number">
+                      {results.litrosFaltantes === 0
+                        ? '0'
+                        : results.litrosFaltantes.toLocaleString('es-MX')}
+                    </span>
+                    <span className="cv-litros-card__unit">litros</span>
+                    {results.litrosFaltantes > 0 && (
+                      <p className="cv-litros-card__sub">
+                        Tienes {Number(inputValue).toLocaleString('es-MX')},<br />
+                        necesitas {results.litrosTotales.toLocaleString('es-MX')}
+                      </p>
+                    )}
+                  </motion.div>
+
+                  {/* Tarjeta: sobran */}
+                  <motion.div
+                    className={`cv-litros-card cv-litros-card--ok ${results.litrosSobrantes === 0 ? 'cv-litros-card--exact' : ''}`}
+                    initial={{ opacity: 0, scale: 0.85, y: 16 }}
+                    animate={{ opacity: 1, scale: 1,    y: 0  }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.25 }}
+                    whileHover={{ scale: 1.03, y: -3 }}
+                  >
+                    <span className="cv-litros-card__badge">
+                      {results.litrosSobrantes === 0 ? '✓' : '+'}
+                    </span>
+                    <p className="cv-litros-card__label">
+                      {results.litrosSobrantes === 0
+                        ? 'Sin excedente'
+                        : `Sobran con ${results.tiendasCompletas} tiendas`}
+                    </p>
+                    <span className="cv-litros-card__number">
+                      {results.litrosSobrantes.toLocaleString('es-MX')}
+                    </span>
+                    <span className="cv-litros-card__unit">litros</span>
+                    {results.litrosSobrantes > 0 && (
+                      <p className="cv-litros-card__sub">
+                        {results.tiendasCompletas} tiendas completas<br />
+                        usan {(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros
+                      </p>
+                    )}
+                  </motion.div>
+                </div>
               )}
             </motion.div>
           );

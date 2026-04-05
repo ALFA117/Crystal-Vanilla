@@ -549,47 +549,95 @@
   color: #C0392B;
 }
 
-/* ── Litros notice ───────────────────────────────────────── */
-.cv-litros-notice {
+/* ── Litros info cards ───────────────────────────────────── */
+.cv-litros-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.cv-litros-card {
+  border-radius: 16px;
+  padding: 1rem 0.9rem 0.9rem;
   display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-top: 0.6rem;
-}
-
-.cv-litros-notice--warn {
-  background: rgba(232, 100, 32, 0.1);
-  border: 1.5px solid rgba(232, 100, 32, 0.4);
-  color: #7A3A0A;
-}
-
-.cv-litros-notice--exact {
-  background: rgba(39, 174, 96, 0.1);
-  border: 1.5px solid rgba(39, 174, 96, 0.4);
-  color: #1A5C30;
-}
-
-.cv-litros-notice__icon {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 0.85rem;
-  line-height: 1;
-  margin-top: 0.1rem;
+  gap: 0.2rem;
+  text-align: center;
+  position: relative;
+  cursor: default;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.09);
 }
 
-.cv-litros-notice--warn  .cv-litros-notice__icon { background: rgba(232,100,32,0.2); color: #B84A00; }
-.cv-litros-notice--exact .cv-litros-notice__icon { background: rgba(39,174,96,0.2);  color: #1A8040; }
+/* Warning (faltan) */
+.cv-litros-card--warn {
+  background: #FFF5EC;
+  border: 1.5px solid #E8834A;
+}
+.cv-litros-card--warn .cv-litros-card__badge  { background: #E8834A; color: #fff; }
+.cv-litros-card--warn .cv-litros-card__number { color: #B84A00; }
+
+/* Ok (sobran) */
+.cv-litros-card--ok {
+  background: #EDFBF3;
+  border: 1.5px solid #27AE60;
+}
+.cv-litros-card--ok .cv-litros-card__badge  { background: #27AE60; color: #fff; }
+.cv-litros-card--ok .cv-litros-card__number { color: #1A6B3A; }
+
+/* Exact overrides */
+.cv-litros-card--exact.cv-litros-card--warn { background: #EDFBF3; border-color: #27AE60; }
+.cv-litros-card--exact.cv-litros-card--warn .cv-litros-card__badge  { background: #27AE60; }
+.cv-litros-card--exact.cv-litros-card--warn .cv-litros-card__number { color: #1A6B3A; }
+
+.cv-litros-card__badge {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.cv-litros-card__label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B4C2A;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.cv-litros-card__number {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0.15rem 0 0;
+}
+
+.cv-litros-card__unit {
+  font-size: 0.7rem;
+  color: #8B6A3E;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+.cv-litros-card__sub {
+  font-size: 0.72rem;
+  color: #7A6040;
+  margin-top: 0.4rem;
+  line-height: 1.4;
+  font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 400px) {
+  .cv-litros-cards { grid-template-columns: 1fr; }
+}
 
 /* ── Reference table ─────────────────────────────────────── */
 .cv-reference {
