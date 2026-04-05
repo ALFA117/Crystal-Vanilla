@@ -16,7 +16,7 @@ const C = {
 };
 
 const MODE_LABELS = {
-  litros:  'Litros de extracto disponibles     ',
+  litros:  'Litros de extracto disponibles',
   tiendas: 'Tiendas requeridas',
   bolsas:  'Bolsas de botellas disponibles',
 };
