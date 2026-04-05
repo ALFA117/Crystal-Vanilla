@@ -16,7 +16,7 @@ const C = {
 };
 
 const MODE_LABELS = {
-  litros:  'Litros de extracto disponibles',
+  litros:  'Litros de extracto disponibles     ',
   tiendas: 'Tiendas requeridas',
   bolsas:  'Bolsas de botellas disponibles',
 };
@@ -90,21 +90,23 @@ export function exportToPDF(results, mode, inputValue) {
   doc.setLineWidth(0.4);
   doc.roundedRect(M, y, CW, 14, 2.5, 2.5, 'FD');
 
+  // Etiqueta: izquierda
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  txt(doc, C.medium);
+  doc.text(MODE_LABELS[mode] + ':', M + 4, y + 7);
+
+  // Valor: derecha (nunca se encima con la etiqueta)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   txt(doc, C.dark);
-  doc.text(`${MODE_LABELS[mode]}:`, M + 4, y + 6);
+  doc.text(Number(inputValue).toLocaleString('es-MX'), M + CW - 4, y + 7, { align: 'right' });
+
+  // Nota: debajo
   doc.setFont('helvetica', 'normal');
-  txt(doc, C.accent);
-  doc.text(
-    `${Number(inputValue).toLocaleString('es-MX')}`,
-    M + 4 + doc.getTextWidth(`${MODE_LABELS[mode]}: `) + 1,
-    y + 6
-  );
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   txt(doc, C.medium);
-  doc.text('(todos los cálculos usan Math.ceil — redondeo hacia arriba)', M + 4, y + 11);
+  doc.text('Math.ceil — redondeo hacia arriba', M + 4, y + 12);
 
   y += 20;
 
