@@ -131,9 +131,9 @@ export default function ResultsGrid({ results, mode, inputValue }) {
                         {results.litrosFaltantes === 0 ? '✓' : '!'}
                       </span>
                       <p className="cv-litros-card__label">
-                        {results.litrosFaltantes === 0
-                          ? 'Litros exactos'
-                          : `Faltan para tienda ${results.tiendas}`}
+                        {results.litrosFaltantes === 0 ? 'Litros exactos' : (
+                          <>Faltan para tienda <span className="cv-litros-card__label-num">{results.tiendas}</span></>
+                        )}
                       </p>
                       <span className="cv-litros-card__number">
                         {results.litrosFaltantes === 0
@@ -160,9 +160,9 @@ export default function ResultsGrid({ results, mode, inputValue }) {
                         {results.litrosSobrantes === 0 ? '✓' : '+'}
                       </span>
                       <p className="cv-litros-card__label">
-                        {results.litrosSobrantes === 0
-                          ? 'Sin excedente'
-                          : `Sobran con ${results.tiendasCompletas} tiendas`}
+                        {results.litrosSobrantes === 0 ? 'Sin excedente' : (
+                          <>Sobran con <span className="cv-litros-card__label-num">{results.tiendasCompletas}</span> tiendas</>
+                        )}
                       </p>
                       <span className="cv-litros-card__number">
                         {results.litrosSobrantes.toLocaleString('es-MX')}

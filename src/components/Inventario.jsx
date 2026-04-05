@@ -20,7 +20,7 @@ export default function Inventario() {
         <p className="cv-inventario__subtitle">Existencias actuales</p>
       </div>
 
-      {/* Fields — deshabilitados hasta conectar Supabase */}
+      {/* Fields */}
       <div className="cv-inventario__body">
         {FIELDS.map((field) => (
           <div key={field.id} className="cv-inventario__field">
@@ -31,23 +31,10 @@ export default function Inventario() {
               className="cv-inventario__input"
               type="number"
               placeholder={field.placeholder}
-              disabled
               aria-label={field.label}
             />
           </div>
         ))}
-      </div>
-
-      {/* Overlay "Próximamente" */}
-      <div className="cv-inventario__overlay">
-        <motion.span
-          className="cv-inventario__coming-soon"
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          Próximamente
-        </motion.span>
-        <span className="cv-inventario__coming-badge">Supabase · Pendiente</span>
       </div>
     </motion.div>
   );
