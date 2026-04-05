@@ -409,6 +409,38 @@
   outline-offset: 2px;
 }
 
+/* ── Inventario button ───────────────────────────────────── */
+.cv-results__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cv-btn-inventario {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.4rem;
+  background: linear-gradient(135deg, #F5C842, #E8A020);
+  color: #3B2A1A;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+  box-shadow: 0 3px 12px rgba(212,160,23,0.35);
+}
+
+.cv-btn-inventario:focus-visible {
+  outline: 2.5px solid #3B2A1A;
+  outline-offset: 2px;
+}
+
 /* ── Sections ────────────────────────────────────────────── */
 .cv-section {
   margin-bottom: 2rem;
@@ -620,11 +652,11 @@
 
 .cv-litros-card__number {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  font-size: clamp(3.2rem, 8vw, 5rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
-  margin: 0.2rem 0 0;
+  margin: 0.25rem 0 0;
 }
 
 .cv-litros-card__unit {

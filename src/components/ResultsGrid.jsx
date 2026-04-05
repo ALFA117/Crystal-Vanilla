@@ -41,17 +41,31 @@ export default function ResultsGrid({ results, mode, inputValue }) {
             <span className="cv-results__title-decor">✦</span>
           </h2>
 
-          <motion.button
-            className="cv-btn-pdf"
-            onClick={handlePDF}
-            whileHover={{ scale: 1.05, boxShadow: '0 6px 24px rgba(212,160,23,0.45)' }}
-            whileTap={{ scale: 0.96 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            📄 Descargar PDF
-          </motion.button>
+          <div className="cv-results__actions">
+            <motion.button
+              className="cv-btn-pdf"
+              onClick={handlePDF}
+              whileHover={{ scale: 1.05, boxShadow: '0 6px 24px rgba(212,160,23,0.45)' }}
+              whileTap={{ scale: 0.96 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              📄 Descargar PDF
+            </motion.button>
+
+            <motion.button
+              className="cv-btn-inventario"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              whileHover={{ scale: 1.05, boxShadow: '0 6px 24px rgba(212,160,23,0.3)' }}
+              whileTap={{ scale: 0.96 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              📋 Inventario
+            </motion.button>
+          </div>
         </motion.div>
 
         {/* ── Sections ── */}
