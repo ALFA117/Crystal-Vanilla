@@ -108,6 +108,33 @@ export function exportToPDF(results, mode, inputValue) {
 
   y += 20;
 
+  // ── Aviso de litros faltantes (solo modo litros) ───────────────────────────
+  if (mode === 'litros' && results.litrosDiff != null) {
+    if (results.litrosDiff === 0) {
+      txt(doc, [39, 174, 96], 'fill');
+      doc.roundedRect(M, y, CW, 9, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      txt(doc, C.white);
+      doc.text(
+        `Tienes exactamente los litros necesarios para ${results.tiendas} tiendas.`,
+        M + 4, y + 6
+      );
+    } else {
+      txt(doc, [192, 100, 30], 'fill');
+      doc.roundedRect(M, y, CW, 9, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      txt(doc, C.white);
+      doc.text(
+        `Te faltan ${results.litrosDiff.toLocaleString('es-MX')} litros para completar las ${results.tiendas} tiendas ` +
+        `(tienes ${Number(inputValue).toLocaleString('es-MX')}, necesitas ${results.litrosTotales.toLocaleString('es-MX')}).`,
+        M + 4, y + 6
+      );
+    }
+    y += 13;
+  }
+
   // ── Sections ──────────────────────────────────────────────────────────────
   for (const section of SECTIONS) {
     const secRgb = SECTION_COLORS[section.id] || C.gold;
@@ -245,8 +272,6 @@ export function exportToPDF(results, mode, inputValue) {
     ['1 paquete de cajas',    '20 cajas (= charolas, es lo mismo)'],
     ['1 bolsa de botellas',   '200 botellas'],
     ['1 rollo de etiquetas',  '1,000 etiquetas'],
-    ['1 paquete etiquetas',   '3 rollos = 3,000 etiquetas'],
-    ['1 caja de rollos',      '9 rollos = 9,000 etiquetas'],
   ];
 
   refs.forEach(([left, right], i) => {

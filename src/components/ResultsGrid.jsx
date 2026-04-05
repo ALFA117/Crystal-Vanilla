@@ -103,6 +103,33 @@ export default function ResultsGrid({ results, mode, inputValue }) {
                   );
                 })}
               </div>
+
+              {/* Aviso de litros faltantes — solo en sección extracto con modo litros */}
+              {section.id === 'extracto' && mode === 'litros' && results.litrosDiff != null && (
+                <motion.div
+                  className={`cv-litros-notice ${results.litrosDiff === 0 ? 'cv-litros-notice--exact' : 'cv-litros-notice--warn'}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.35 }}
+                >
+                  {results.litrosDiff === 0 ? (
+                    <>
+                      <span className="cv-litros-notice__icon">✓</span>
+                      <span>Tienes exactamente los litros necesarios para {results.tiendas} tiendas.</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="cv-litros-notice__icon">!</span>
+                      <span>
+                        Para completar las <strong>{results.tiendas} tiendas</strong> necesitas{' '}
+                        <strong>{results.litrosTotales.toLocaleString('es-MX')} litros</strong>.{' '}
+                        Te faltan <strong>{results.litrosDiff.toLocaleString('es-MX')} litros</strong>{' '}
+                        (tienes {Number(inputValue).toLocaleString('es-MX')}).
+                      </span>
+                    </>
+                  )}
+                </motion.div>
+              )}
             </motion.div>
           );
         })}
@@ -122,8 +149,6 @@ export default function ResultsGrid({ results, mode, inputValue }) {
               ['1 paquete de cajas',    '20 cajas (= charolas, es lo mismo)'],
               ['1 bolsa de botellas',   '200 botellas'],
               ['1 rollo de etiquetas',  '1,000 etiquetas'],
-              ['1 paquete etiquetas',   '3 rollos = 3,000 etiquetas'],
-              ['1 caja de rollos',      '9 rollos = 9,000 etiquetas'],
             ].map(([left, right]) => (
               <div key={left} className="cv-reference__row">
                 <span className="cv-reference__key">{left}</span>

@@ -42,19 +42,22 @@ export function calculate(mode, rawValue) {
   const botellasTotal = tiendas * 220;
   const cajasTotal    = tiendas * 11;
 
+  // Diferencia de litros (solo en modo litros)
+  // Con Math.ceil, litrosTotales >= value siempre → diff >= 0
+  const litrosDiff = mode === 'litros' ? litrosTotales - value : null;
+
   return {
     // ── Simples ────────────────────────────────────────────────
     tiendas,
     litrosTotales,
     cajasTotal,
     botellasTotal,
+    litrosDiff,          // null | 0 (exacto) | >0 (faltan litros)
 
     // ── Con desglose de paquetes ────────────────────────────────
-    paquetesCajas:     pkgInfo(cajasTotal,    20,   'cajas'),
-    bolsasBotellas:    pkgInfo(botellasTotal, 200,  'botellas'),
-    rollosEtiquetas:   pkgInfo(botellasTotal, 1000, 'etiquetas'),
-    paquetesEtiquetas: pkgInfo(botellasTotal, 3000, 'etiquetas'),
-    cajasRollos:       pkgInfo(botellasTotal, 9000, 'etiquetas'),
+    paquetesCajas:   pkgInfo(cajasTotal,    20,   'cajas'),
+    bolsasBotellas:  pkgInfo(botellasTotal, 200,  'botellas'),
+    rollosEtiquetas: pkgInfo(botellasTotal, 1000, 'etiquetas'),
   };
 }
 
@@ -101,12 +104,8 @@ export const SECTIONS = [
     title: '🏷️ Etiquetas',
     color: '#6B1A5C',
     items: [
-      { type: 'pkg', key: 'rollosEtiquetas',   icon: '🏷️', label: 'Rollos de Etiquetas',       unit: 'rollos',
+      { type: 'pkg', key: 'rollosEtiquetas', icon: '🏷️', label: 'Rollos de Etiquetas', unit: 'rollos',
         desc: '1,000 etiquetas por rollo' },
-      { type: 'pkg', key: 'paquetesEtiquetas', icon: '📦', label: 'Paquetes de Etiquetas',     unit: 'paquetes',
-        desc: '3 rollos · 3,000 etiquetas' },
-      { type: 'pkg', key: 'cajasRollos',        icon: '🗃️', label: 'Cajas de Rollos',           unit: 'cajas',
-        desc: '9 rollos · 9,000 etiquetas' },
     ],
   },
 ];
