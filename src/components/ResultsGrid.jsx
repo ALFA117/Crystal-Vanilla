@@ -91,6 +91,8 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                 {section.items.map((item) => {
                   const idx = cardGlobalIndex++;
                   if (item.type === 'simple') {
+                    // En modo litros, la tarjeta de tiendas la maneja la tarjeta especial de litros
+                    if (mode === 'litros' && section.id === 'tiendas' && item.key === 'tiendas') return null;
                     return (
                       <SimpleCard
                         key={item.key}
