@@ -155,7 +155,7 @@ export function exportToPDF(results, mode, inputValue) {
       doc.setFontSize(20);
       doc.text(Math.ceil(results.litrosFaltantes / 10).toLocaleString('es-MX'), M + halfW + 7, y + 19);
       doc.setFontSize(7.5);
-      doc.text('charolas', M + CW - 3, y + 19, { align: 'right' });
+      doc.text('cajas', M + CW - 3, y + 19, { align: 'right' });
       doc.setFontSize(6.5);
       doc.text(
         `(${results.litrosFaltantes.toLocaleString('es-MX')} litros)`,

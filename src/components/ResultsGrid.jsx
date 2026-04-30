@@ -153,7 +153,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                         <span className="cv-card__unit">tiendas</span>
                         <span className="cv-card__desc">
                           Faltan {results.litrosFaltantes.toLocaleString('es-MX')} litros
-                          / {Math.ceil(results.litrosFaltantes / 10)} charolas
+                          / {Math.ceil(results.litrosFaltantes / 10)} cajas
                           para completar {results.tiendas} tiendas
                         </span>
                         <div className="cv-card__bar" />
