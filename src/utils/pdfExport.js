@@ -115,47 +115,50 @@ export function exportToPDF(results, mode, inputValue) {
     const halfW = (CW - 4) / 2;
     const cardH = 28;
 
-    // Tarjeta FALTAN (izquierda)
-    const warnColor = results.litrosFaltantes === 0 ? [39, 174, 96] : [192, 100, 30];
-    txt(doc, warnColor, 'fill');
-    doc.roundedRect(M, y, halfW, cardH, 2, 2, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    txt(doc, C.white);
-    const warnLabel = results.litrosFaltantes === 0
-      ? 'Litros exactos'
-      : `Faltan para tienda ${results.tiendas}`;
-    doc.text(warnLabel, M + 3, y + 6);
-    doc.setFontSize(20);
-    doc.text(results.litrosFaltantes.toLocaleString('es-MX'), M + 3, y + 19);
-    doc.setFontSize(7.5);
-    doc.text('litros', M + halfW - 3, y + 19, { align: 'right' });
-    if (results.litrosFaltantes > 0) {
+    if (results.litrosSobrantes === 0) {
+      // Caso exacto: una sola tarjeta verde centrada
+      txt(doc, [39, 174, 96], 'fill');
+      doc.roundedRect(M, y, CW, cardH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      txt(doc, C.white);
+      doc.text('Tiendas Completas - Litros exactos', M + 3, y + 6);
+      doc.setFontSize(20);
+      doc.text(results.tiendas.toLocaleString('es-MX'), M + 3, y + 19);
+      doc.setFontSize(7.5);
+      doc.text('tiendas', M + CW - 3, y + 19, { align: 'right' });
+    } else {
+      // Tarjeta TIENDAS COMPLETAS (izquierda, verde)
+      txt(doc, [39, 174, 96], 'fill');
+      doc.roundedRect(M, y, halfW, cardH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      txt(doc, C.white);
+      doc.text('Tiendas Completas', M + 3, y + 6);
+      doc.setFontSize(20);
+      doc.text(results.tiendasCompletas.toLocaleString('es-MX'), M + 3, y + 19);
+      doc.setFontSize(7.5);
+      doc.text('tiendas', M + halfW - 3, y + 19, { align: 'right' });
       doc.setFontSize(6.5);
       doc.text(
-        `Tienes ${Number(inputValue).toLocaleString('es-MX')}, necesitas ${results.litrosTotales.toLocaleString('es-MX')}`,
+        `${(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros usados`,
         M + 3, y + 25
       );
-    }
 
-    // Tarjeta SOBRAN (derecha)
-    txt(doc, [39, 174, 96], 'fill');
-    doc.roundedRect(M + halfW + 4, y, halfW, cardH, 2, 2, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    txt(doc, C.white);
-    const okLabel = results.litrosSobrantes === 0
-      ? 'Sin excedente'
-      : `Sobran con ${results.tiendasCompletas} tiendas`;
-    doc.text(okLabel, M + halfW + 7, y + 6);
-    doc.setFontSize(20);
-    doc.text(results.litrosSobrantes.toLocaleString('es-MX'), M + halfW + 7, y + 19);
-    doc.setFontSize(7.5);
-    doc.text('litros', M + CW - 3, y + 19, { align: 'right' });
-    if (results.litrosSobrantes > 0) {
+      // Tarjeta TE FALTAN CHAROLAS (derecha, naranja)
+      txt(doc, [192, 100, 30], 'fill');
+      doc.roundedRect(M + halfW + 4, y, halfW, cardH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      txt(doc, C.white);
+      doc.text(`Para completar ${results.tiendas} tiendas`, M + halfW + 7, y + 6);
+      doc.setFontSize(20);
+      doc.text(Math.ceil(results.litrosFaltantes / 10).toLocaleString('es-MX'), M + halfW + 7, y + 19);
+      doc.setFontSize(7.5);
+      doc.text('charolas', M + CW - 3, y + 19, { align: 'right' });
       doc.setFontSize(6.5);
       doc.text(
-        `${results.tiendasCompletas} tiendas completas usan ${(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros`,
+        `(${results.litrosFaltantes.toLocaleString('es-MX')} litros)`,
         M + halfW + 7, y + 25
       );
     }
