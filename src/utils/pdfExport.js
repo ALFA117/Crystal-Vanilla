@@ -12,21 +12,20 @@ const C = {
   white:   [250, 247, 240],
   green:   [ 30, 132,  73],
   red:     [192,  57,  43],
+  orange:  [192, 100,  30],
   blue:    [ 41, 128, 185],
 };
 
 const MODE_LABELS = {
   litros:  'Litros de extracto disponibles',
   tiendas: 'Tiendas requeridas',
-  bolsas:  'Bolsas de botellas disponibles',
 };
 
 const SECTION_COLORS = {
-  tiendas:  [92, 61, 30],
+  tiendas:  [92,  61,  30],
   extracto: [41, 128, 185],
-  cajas:    [139, 94, 26],
-  charolas: [107, 73, 42],
-  botellas: [39, 174, 96],
+  cajas:    [139, 94,  26],
+  botellas: [39, 174,  96],
   etiquetas:[142, 68, 173],
 };
 
@@ -35,13 +34,12 @@ function txt(doc, rgb, type = 'text') {
   else doc.setFillColor(...rgb);
 }
 
-/** Elimina emojis y caracteres no soportados por las fuentes estándar de jsPDF */
 function safe(str) {
   return (str || '')
-    .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')  // emojis SMP (🌿📦🧴…)
-    .replace(/[\u{2600}-\u{27BF}]/gu,    '')  // símbolos misc / dingbats
-    .replace(/\uFE0F/g, '')                   // variation selector
-    .replace(/\u200D/g, '')                   // zero-width joiner
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')
+    .replace(/[\u{2600}-\u{27BF}]/gu,   '')
+    .replace(/️/g, '')
+    .replace(/‍/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -52,257 +50,283 @@ function fmtExact(exact) {
   return parseFloat(exact.toFixed(3)).toLocaleString('es-MX', { maximumFractionDigits: 3 });
 }
 
-export function exportToPDF(results, mode, inputValue) {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210;
-  const M = 14; // margin
-  const CW = W - M * 2;
+function addPage(doc) {
+  doc.addPage();
+  txt(doc, C.ivory, 'fill');
+  doc.rect(0, 0, 210, 297, 'F');
+  return 14;
+}
 
-  // ── Gold top bar ──────────────────────────────────────────────────────────
+function drawCardBase(doc, cx, cy, w, h, secRgb) {
+  txt(doc, C.card, 'fill');
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(cx, cy, w, h, 2, 2, 'FD');
+  txt(doc, secRgb, 'fill');
+  doc.rect(cx, cy, 2, h, 'F');
+}
+
+export function exportToPDF(results, mode, inputValue) {
+  const doc  = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W    = 210;
+  const M    = 14;
+  const CW   = W - M * 2;
+  const colW = (CW - 4) / 2;
+
+  // ── Header dorado ─────────────────────────────────────────────────────────
   txt(doc, C.gold, 'fill');
-  doc.rect(0, 0, W, 30, 'F');
+  doc.rect(0, 0, W, 33, 'F');
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
+  doc.setFontSize(22);
   txt(doc, C.white);
   doc.text('Crystal Vanilla', W / 2, 13, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.text('Calculadora de Producción', W / 2, 22, { align: 'center' });
+  doc.setFontSize(10);
+  doc.text('Calculadora de Produccion', W / 2, 21, { align: 'center' });
 
-  // ── Ivory background ──────────────────────────────────────────────────────
+  doc.setFontSize(7.5);
+  txt(doc, [255, 240, 170]);
+  const modeStr = mode === 'litros' ? 'Modo: Litros de Extracto' : 'Modo: Tiendas Requeridas';
+  doc.text(modeStr, W / 2, 29, { align: 'center' });
+
+  // ── Fondo marfil ──────────────────────────────────────────────────────────
   txt(doc, C.ivory, 'fill');
-  doc.rect(0, 30, W, 267, 'F');
+  doc.rect(0, 33, W, 264, 'F');
 
-  // ── Date + Input ──────────────────────────────────────────────────────────
-  let y = 36;
+  let y = 39;
+
+  // ── Fecha ─────────────────────────────────────────────────────────────────
   const date = new Date().toLocaleDateString('es-MX', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
-  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
   txt(doc, C.medium);
   doc.text(`Generado: ${date}`, W / 2, y, { align: 'center' });
 
-  y += 6;
+  y += 5;
+
+  // ── Recuadro de entrada ───────────────────────────────────────────────────
   txt(doc, C.card, 'fill');
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.4);
-  doc.roundedRect(M, y, CW, 14, 2.5, 2.5, 'FD');
+  doc.roundedRect(M, y, CW, 13, 2.5, 2.5, 'FD');
 
-  // Etiqueta: izquierda
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   txt(doc, C.medium);
-  doc.text(MODE_LABELS[mode] + ':', M + 4, y + 7);
+  doc.text(MODE_LABELS[mode] + ':', M + 4, y + 6);
 
-  // Valor: derecha (nunca se encima con la etiqueta)
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   txt(doc, C.dark);
-  doc.text(Number(inputValue).toLocaleString('es-MX'), M + CW - 4, y + 7, { align: 'right' });
+  doc.text(Number(inputValue).toLocaleString('es-MX'), M + CW - 4, y + 6, { align: 'right' });
 
-  // Nota: debajo
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   txt(doc, C.medium);
-  doc.text('Math.ceil — redondeo hacia arriba', M + 4, y + 12);
+  doc.text('Todos los calculos usan Math.ceil (redondeo hacia arriba)', M + 4, y + 11);
 
-  y += 20;
+  y += 18;
 
-  // ── Tarjetas de litros (solo modo litros) ─────────────────────────────────
-  if (mode === 'litros' && results.litrosFaltantes != null) {
-    const halfW = (CW - 4) / 2;
-    const cardH = 28;
-
-    if (results.litrosSobrantes === 0) {
-      // Caso exacto: una sola tarjeta verde centrada
-      txt(doc, [39, 174, 96], 'fill');
-      doc.roundedRect(M, y, CW, cardH, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      txt(doc, C.white);
-      doc.text('Tiendas Completas - Litros exactos', M + 3, y + 6);
-      doc.setFontSize(20);
-      doc.text(results.tiendas.toLocaleString('es-MX'), M + 3, y + 19);
-      doc.setFontSize(7.5);
-      doc.text('tiendas', M + CW - 3, y + 19, { align: 'right' });
-    } else {
-      // Tarjeta TIENDAS COMPLETAS (izquierda, verde)
-      txt(doc, [39, 174, 96], 'fill');
-      doc.roundedRect(M, y, halfW, cardH, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      txt(doc, C.white);
-      doc.text('Tiendas Completas', M + 3, y + 6);
-      doc.setFontSize(20);
-      doc.text(results.tiendasCompletas.toLocaleString('es-MX'), M + 3, y + 19);
-      doc.setFontSize(7.5);
-      doc.text('tiendas', M + halfW - 3, y + 19, { align: 'right' });
-      doc.setFontSize(6.5);
-      doc.text(
-        `${(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros usados`,
-        M + 3, y + 25
-      );
-
-      // Tarjeta TE FALTAN CHAROLAS (derecha, naranja)
-      txt(doc, [192, 100, 30], 'fill');
-      doc.roundedRect(M + halfW + 4, y, halfW, cardH, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      txt(doc, C.white);
-      doc.text(`Para completar ${results.tiendas} tiendas`, M + halfW + 7, y + 6);
-      doc.setFontSize(20);
-      doc.text(Math.ceil(results.litrosFaltantes / 10).toLocaleString('es-MX'), M + halfW + 7, y + 19);
-      doc.setFontSize(7.5);
-      doc.text('cajas', M + CW - 3, y + 19, { align: 'right' });
-      doc.setFontSize(6.5);
-      doc.text(
-        `(${results.litrosFaltantes.toLocaleString('es-MX')} litros)`,
-        M + halfW + 7, y + 25
-      );
-    }
-
-    y += cardH + 4;
-  }
-
-  // ── Sections ──────────────────────────────────────────────────────────────
+  // ── Secciones ─────────────────────────────────────────────────────────────
   for (const section of SECTIONS) {
+    if (y > 255) y = addPage(doc);
+
     const secRgb = SECTION_COLORS[section.id] || C.gold;
 
-    // Section title bar
+    // Barra de título de sección
     txt(doc, secRgb, 'fill');
-    doc.rect(M, y, CW, 7, 'F');
+    doc.roundedRect(M, y, CW, 7, 1.5, 1.5, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     txt(doc, C.white);
-    doc.text(safe(section.title), M + 3, y + 5);
+    doc.text(safe(section.title), M + 4, y + 5);
     y += 9;
 
-    // Cards
-    const colW = (CW - 4) / 2;
-    let colIdx = 0;
+    let colIdx    = 0;
     let rowStartY = y;
-    let maxRowH = 0;
+    let maxRowH   = 0;
 
+    // ── Tarjetas normales de la sección ──
     for (const item of section.items) {
-      const cx = M + colIdx * (colW + 4);
-      const cy = rowStartY;
+      // En modo litros, la tarjeta de tiendas la manejamos aparte
+      if (mode === 'litros' && section.id === 'tiendas' && item.key === 'tiendas') continue;
 
-      const isPkg = item.type === 'pkg';
-      const cardH = isPkg ? 28 : 18;
+      const cx      = M + colIdx * (colW + 4);
+      const cy      = rowStartY;
+      const isPkg   = item.type === 'pkg';
+      const cardH   = isPkg ? 30 : 18;
 
-      // Card background
-      txt(doc, C.card, 'fill');
-      doc.setDrawColor(...C.border);
-      doc.setLineWidth(0.3);
-      doc.roundedRect(cx, cy, colW, cardH, 2, 2, 'FD');
+      drawCardBase(doc, cx, cy, colW, cardH, secRgb);
 
-      // Left accent
-      txt(doc, secRgb, 'fill');
-      doc.rect(cx, cy, 2, cardH, 'F');
-
-      // Icon + label
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8.5);
+      doc.setFontSize(7.5);
       txt(doc, C.medium);
-      doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 6);
+      doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 5.5);
 
       if (item.type === 'simple') {
         const val = results[item.key];
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
         txt(doc, C.dark);
-        doc.text(
-          val != null ? Number(val).toLocaleString('es-MX') : '—',
-          cx + 4, cy + 14
-        );
+        doc.text(val != null ? Number(val).toLocaleString('es-MX') : '—', cx + 4, cy + 13.5);
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.5);
+        doc.setFontSize(7);
         txt(doc, C.medium);
-        doc.text(item.unit, cx + colW - 3, cy + 14, { align: 'right' });
-
+        doc.text(item.unit, cx + colW - 3, cy + 13.5, { align: 'right' });
       } else {
-        // pkg card
         const pd = results[item.key];
         if (pd) {
-          // Needed (big)
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(13);
           txt(doc, C.dark);
           doc.text(pd.needed.toLocaleString('es-MX'), cx + 4, cy + 13);
           doc.setFont('helvetica', 'normal');
-          doc.setFontSize(7.5);
+          doc.setFontSize(7);
           txt(doc, C.medium);
           doc.text(item.unit, cx + colW - 3, cy + 13, { align: 'right' });
-
-          // Breakdown rows
-          const exactStr = `Exacto: ${fmtExact(pd.exact)} ${item.unit}`;
-          doc.setFontSize(7);
+          doc.setFontSize(6.5);
           txt(doc, C.dark);
-          doc.text(exactStr, cx + 4, cy + 18);
-
+          doc.text(`Exacto: ${fmtExact(pd.exact)} ${item.unit}`, cx + 4, cy + 18.5);
           if (!pd.isExact) {
             txt(doc, C.green);
-            doc.text(
-              `Usas del último: ${pd.usedInLast.toLocaleString('es-MX')} ${pd.itemUnit}`,
-              cx + 4, cy + 22.5
-            );
+            doc.text(`Usas del ultimo: ${pd.usedInLast.toLocaleString('es-MX')} ${pd.itemUnit}`, cx + 4, cy + 23);
             txt(doc, C.red);
-            doc.text(
-              `Sobran: ${pd.leftover.toLocaleString('es-MX')} ${pd.itemUnit}`,
-              cx + 4, cy + 27
-            );
+            doc.text(`Sobran: ${pd.leftover.toLocaleString('es-MX')} ${pd.itemUnit}`, cx + 4, cy + 27.5);
           }
         }
       }
 
       maxRowH = Math.max(maxRowH, cardH);
-
       colIdx++;
-      if (colIdx >= 2) {
-        colIdx = 0;
-        rowStartY += maxRowH + 3;
-        maxRowH = 0;
-      }
+      if (colIdx >= 2) { colIdx = 0; rowStartY += maxRowH + 3; maxRowH = 0; }
     }
 
-    if (colIdx > 0) {
-      rowStartY += maxRowH + 3;
+    // ── Tarjeta Tiendas Completas (sección tiendas, modo litros) ──
+    if (section.id === 'tiendas' && mode === 'litros' && results.litrosFaltantes != null) {
+      const cx          = M + colIdx * (colW + 4);
+      const cy          = rowStartY;
+      const hasFaltantes = results.litrosSobrantes > 0;
+      const cardH       = hasFaltantes ? 23 : 18;
+
+      drawCardBase(doc, cx, cy, colW, cardH, secRgb);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      txt(doc, C.medium);
+      doc.text('Tiendas Completas', cx + 4, cy + 5.5);
+
+      const numVal = hasFaltantes ? results.tiendasCompletas : results.tiendas;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      txt(doc, C.dark);
+      doc.text(numVal.toLocaleString('es-MX'), cx + 4, cy + 13.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      txt(doc, C.medium);
+      doc.text('tiendas', cx + colW - 3, cy + 13.5, { align: 'right' });
+
+      if (hasFaltantes) {
+        doc.setFontSize(6);
+        txt(doc, C.orange);
+        doc.text(
+          `Faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros / ${Math.ceil(results.litrosFaltantes / 10)} cajas`,
+          cx + 4, cy + 19
+        );
+        doc.text(`para completar ${results.tiendas} tiendas`, cx + 4, cy + 23);
+      } else {
+        doc.setFontSize(7);
+        txt(doc, C.green);
+        doc.text('Litros exactos', cx + 4, cy + 19);
+      }
+
+      maxRowH = Math.max(maxRowH, cardH);
+      colIdx++;
+      if (colIdx >= 2) { colIdx = 0; rowStartY += maxRowH + 3; maxRowH = 0; }
     }
+
+    // Flush fila incompleta
+    if (colIdx > 0) rowStartY += maxRowH + 3;
     y = rowStartY + 2;
 
-    // Check page overflow
-    if (y > 260) {
-      doc.addPage();
-      txt(doc, C.ivory, 'fill');
-      doc.rect(0, 0, W, 297, 'F');
-      y = 14;
+    // ── Tarjetas FALTAN / SOBRAN litros (sección extracto, modo litros) ──
+    if (section.id === 'extracto' && mode === 'litros' && results.litrosFaltantes != null) {
+      if (y > 240) y = addPage(doc);
+
+      const hW      = colW;
+      const litCardH = 26;
+
+      // Tarjeta FALTAN (izquierda)
+      const warnRgb = results.litrosFaltantes === 0 ? C.green : C.orange;
+      txt(doc, warnRgb, 'fill');
+      doc.roundedRect(M, y, hW, litCardH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      txt(doc, C.white);
+      const warnLabel = results.litrosFaltantes === 0
+        ? 'Litros exactos'
+        : `Para completar ${results.tiendas} tiendas`;
+      doc.text(warnLabel, M + 3, y + 5.5);
+      doc.setFontSize(18);
+      doc.text(results.litrosFaltantes.toLocaleString('es-MX'), M + 3, y + 17);
+      doc.setFontSize(7);
+      doc.text('litros', M + hW - 3, y + 17, { align: 'right' });
+      if (results.litrosFaltantes > 0) {
+        doc.setFontSize(6);
+        doc.text(
+          `Tienes ${Number(inputValue).toLocaleString('es-MX')}, necesitas ${results.litrosTotales.toLocaleString('es-MX')}`,
+          M + 3, y + 23
+        );
+      }
+
+      // Tarjeta SOBRAN (derecha)
+      txt(doc, C.green, 'fill');
+      doc.roundedRect(M + hW + 4, y, hW, litCardH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      txt(doc, C.white);
+      const okLabel = results.litrosSobrantes === 0
+        ? 'Sin excedente'
+        : `Sobran con ${results.tiendasCompletas} tiendas`;
+      doc.text(okLabel, M + hW + 7, y + 5.5);
+      doc.setFontSize(18);
+      doc.text(results.litrosSobrantes.toLocaleString('es-MX'), M + hW + 7, y + 17);
+      doc.setFontSize(7);
+      doc.text('litros', M + CW - 3, y + 17, { align: 'right' });
+      if (results.litrosSobrantes > 0) {
+        doc.setFontSize(6);
+        doc.text(
+          `${results.tiendasCompletas} tiendas completas usan ${(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros`,
+          M + hW + 7, y + 23
+        );
+      }
+
+      y += litCardH + 4;
     }
+
+    if (y > 255) y = addPage(doc);
   }
 
-  // ── Reference table ───────────────────────────────────────────────────────
-  if (y + 60 > 270) {
-    doc.addPage();
-    txt(doc, C.ivory, 'fill');
-    doc.rect(0, 0, W, 297, 'F');
-    y = 14;
-  }
+  // ── Tabla de equivalencias ────────────────────────────────────────────────
+  if (y + 55 > 275) y = addPage(doc);
 
   txt(doc, C.gold, 'fill');
-  doc.rect(M, y, CW, 7, 'F');
+  doc.roundedRect(M, y, CW, 7, 1.5, 1.5, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   txt(doc, C.white);
-  doc.text('Tabla de Equivalencias', M + 3, y + 5);
+  doc.text('Tabla de Equivalencias', M + 4, y + 5);
   y += 9;
 
   const refs = [
-    ['1 tienda',              '11 cajas · 110 litros · 220 botellas'],
-    ['1 caja',                '10 litros · 20 botellas'],
-    ['1 paquete de cajas',    '20 cajas (= charolas, es lo mismo)'],
-    ['1 bolsa de botellas',   '200 botellas'],
-    ['1 rollo de etiquetas',  '1,000 etiquetas'],
+    ['1 tienda',             '11 cajas  ·  110 litros  ·  220 botellas'],
+    ['1 caja (charola)',      '10 litros  ·  20 botellas'],
+    ['1 paquete de cajas',   '20 cajas'],
+    ['1 bolsa de botellas',  '200 botellas'],
+    ['1 rollo de etiquetas', '1,000 etiquetas'],
   ];
 
   refs.forEach(([left, right], i) => {
@@ -313,10 +337,10 @@ export function exportToPDF(results, mode, inputValue) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
     txt(doc, C.dark);
-    doc.text(left, M + 3, y + 0.5);
+    doc.text(left, M + 4, y + 0.5);
     doc.setFont('helvetica', 'normal');
     txt(doc, C.medium);
-    doc.text(`= ${right}`, M + 58, y + 0.5);
+    doc.text(`= ${right}`, M + 62, y + 0.5);
     y += 7;
   });
 
@@ -324,12 +348,9 @@ export function exportToPDF(results, mode, inputValue) {
   txt(doc, C.dark, 'fill');
   doc.rect(0, 285, W, 12, 'F');
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
+  doc.setFontSize(8);
   txt(doc, [245, 200, 66]);
-  doc.text(
-    'Crystal Vanilla © 2025 — Producción y Logística',
-    W / 2, 292, { align: 'center' }
-  );
+  doc.text('Crystal Vanilla © 2025 — Produccion y Logistica', W / 2, 292, { align: 'center' });
 
   doc.save(`CrystalVanilla_${mode}_${inputValue}_${Date.now()}.pdf`);
 }
