@@ -124,7 +124,8 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                   <>
                     {results.litrosSobrantes === 0 ? (
                       <motion.div
-                        className="cv-litros-card cv-litros-card--ok cv-litros-card--exact"
+                        className="cv-litros-card"
+                        style={{ background: accentColor }}
                         initial={{ opacity: 0, scale: 0.85, y: 16 }}
                         animate={{ opacity: 1, scale: 1,    y: 0  }}
                         transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.15 }}
@@ -138,7 +139,8 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                       </motion.div>
                     ) : (
                       <motion.div
-                        className="cv-litros-card cv-litros-card--ok"
+                        className="cv-litros-card"
+                        style={{ background: accentColor }}
                         initial={{ opacity: 0, scale: 0.85, y: 16 }}
                         animate={{ opacity: 1, scale: 1,    y: 0  }}
                         transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.15 }}
