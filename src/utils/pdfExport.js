@@ -158,7 +158,7 @@ export function exportToPDF(results, mode, inputValue) {
       const cx      = M + colIdx * (colW + 4);
       const cy      = rowStartY;
       const isPkg   = item.type === 'pkg';
-      const cardH   = isPkg ? 30 : 18;
+      const cardH   = isPkg ? 32 : 18;
 
       drawCardBase(doc, cx, cy, colW, cardH, secRgb);
 
@@ -205,47 +205,53 @@ export function exportToPDF(results, mode, inputValue) {
       if (colIdx >= 2) { colIdx = 0; rowStartY += maxRowH + 3; maxRowH = 0; }
     }
 
-    // ── Tarjeta Tiendas Completas (sección tiendas, modo litros) ──
+    // ── Tarjeta Tiendas Completas — ancho completo (sección tiendas, modo litros) ──
     if (section.id === 'tiendas' && mode === 'litros' && results.litrosFaltantes != null) {
-      const cx          = M + colIdx * (colW + 4);
-      const cy          = rowStartY;
+      // Flush fila parcial si hay algo antes
+      if (colIdx > 0) { rowStartY += maxRowH + 3; colIdx = 0; maxRowH = 0; }
+
+      const cy           = rowStartY;
       const hasFaltantes = results.litrosSobrantes > 0;
-      const cardH       = hasFaltantes ? 23 : 18;
+      const cardH        = hasFaltantes ? 22 : 18;
 
-      drawCardBase(doc, cx, cy, colW, cardH, secRgb);
+      // Tarjeta ancho completo
+      drawCardBase(doc, M, cy, CW, cardH, secRgb);
 
+      // Etiqueta
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7.5);
       txt(doc, C.medium);
-      doc.text('Tiendas Completas', cx + 4, cy + 5.5);
+      doc.text('Tiendas Completas', M + 4, cy + 5.5);
 
+      // Número grande (izquierda)
       const numVal = hasFaltantes ? results.tiendasCompletas : results.tiendas;
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
+      doc.setFontSize(16);
       txt(doc, C.dark);
-      doc.text(numVal.toLocaleString('es-MX'), cx + 4, cy + 13.5);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      txt(doc, C.medium);
-      doc.text('tiendas', cx + colW - 3, cy + 13.5, { align: 'right' });
+      doc.text(numVal.toLocaleString('es-MX'), M + 4, cy + 14);
 
+      // Unidad (derecha)
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      txt(doc, C.medium);
+      doc.text('tiendas', M + CW - 4, cy + 14, { align: 'right' });
+
+      // Subtext en una sola línea (cabe porque es CW de ancho)
       if (hasFaltantes) {
-        doc.setFontSize(6);
+        doc.setFontSize(7);
         txt(doc, C.orange);
+        const cajas = Math.ceil(results.litrosFaltantes / 10);
         doc.text(
-          `Faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros / ${Math.ceil(results.litrosFaltantes / 10)} cajas`,
-          cx + 4, cy + 19
+          `Faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros / ${cajas} cajas para completar ${results.tiendas} tiendas`,
+          M + 4, cy + 19.5
         );
-        doc.text(`para completar ${results.tiendas} tiendas`, cx + 4, cy + 23);
       } else {
         doc.setFontSize(7);
         txt(doc, C.green);
-        doc.text('Litros exactos', cx + 4, cy + 19);
+        doc.text('Litros exactos  ✓', M + 4, cy + 19);
       }
 
-      maxRowH = Math.max(maxRowH, cardH);
-      colIdx++;
-      if (colIdx >= 2) { colIdx = 0; rowStartY += maxRowH + 3; maxRowH = 0; }
+      rowStartY += cardH + 3;
     }
 
     // Flush fila incompleta
@@ -256,8 +262,8 @@ export function exportToPDF(results, mode, inputValue) {
     if (section.id === 'extracto' && mode === 'litros' && results.litrosFaltantes != null) {
       if (y > 240) y = addPage(doc);
 
-      const hW      = colW;
-      const litCardH = 26;
+      const hW       = colW;
+      const litCardH = 28;
 
       // Tarjeta FALTAN (izquierda)
       const warnRgb = results.litrosFaltantes === 0 ? C.green : C.orange;
@@ -278,7 +284,7 @@ export function exportToPDF(results, mode, inputValue) {
         doc.setFontSize(6);
         doc.text(
           `Tienes ${Number(inputValue).toLocaleString('es-MX')}, necesitas ${results.litrosTotales.toLocaleString('es-MX')}`,
-          M + 3, y + 23
+          M + 3, y + 25
         );
       }
 
@@ -300,7 +306,7 @@ export function exportToPDF(results, mode, inputValue) {
         doc.setFontSize(6);
         doc.text(
           `${results.tiendasCompletas} tiendas completas usan ${(results.tiendasCompletas * 110).toLocaleString('es-MX')} litros`,
-          M + hW + 7, y + 23
+          M + hW + 7, y + 25
         );
       }
 
