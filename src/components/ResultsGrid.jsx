@@ -124,37 +124,39 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                   <>
                     {results.litrosSobrantes === 0 ? (
                       <motion.div
-                        className="cv-litros-card"
-                        style={{ background: accentColor }}
-                        initial={{ opacity: 0, scale: 0.85, y: 16 }}
+                        className="cv-card cv-card--simple"
+                        style={{ '--card-accent': accentColor }}
+                        initial={{ opacity: 0, scale: 0.75, y: 24 }}
                         animate={{ opacity: 1, scale: 1,    y: 0  }}
-                        transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.15 }}
-                        whileHover={{ scale: 1.03, y: -3 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.15 }}
+                        whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                       >
-                        <span className="cv-litros-card__badge">✓</span>
-                        <p className="cv-litros-card__label">Tiendas Completas</p>
-                        <span className="cv-litros-card__label-num">{results.tiendas}</span>
-                        <span className="cv-litros-card__unit">tiendas</span>
-                        <p className="cv-litros-card__sub">Litros exactos</p>
+                        <span className="cv-card__icon">🏪</span>
+                        <p className="cv-card__label">Tiendas Completas</p>
+                        <span className="cv-card__number">{results.tiendas.toLocaleString('es-MX')}</span>
+                        <span className="cv-card__unit">tiendas</span>
+                        <span className="cv-card__desc">Litros exactos ✓</span>
+                        <div className="cv-card__bar" />
                       </motion.div>
                     ) : (
                       <motion.div
-                        className="cv-litros-card"
-                        style={{ background: accentColor }}
-                        initial={{ opacity: 0, scale: 0.85, y: 16 }}
+                        className="cv-card cv-card--simple"
+                        style={{ '--card-accent': accentColor }}
+                        initial={{ opacity: 0, scale: 0.75, y: 24 }}
                         animate={{ opacity: 1, scale: 1,    y: 0  }}
-                        transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.15 }}
-                        whileHover={{ scale: 1.03, y: -3 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.15 }}
+                        whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                       >
-                        <span className="cv-litros-card__badge">🏪</span>
-                        <p className="cv-litros-card__label">Tiendas Completas</p>
-                        <span className="cv-litros-card__label-num">{results.tiendasCompletas}</span>
-                        <span className="cv-litros-card__unit">tiendas</span>
-                        <p className="cv-litros-card__sub">
+                        <span className="cv-card__icon">🏪</span>
+                        <p className="cv-card__label">Tiendas Completas</p>
+                        <span className="cv-card__number">{results.tiendasCompletas.toLocaleString('es-MX')}</span>
+                        <span className="cv-card__unit">tiendas</span>
+                        <span className="cv-card__desc">
                           Faltan {results.litrosFaltantes.toLocaleString('es-MX')} litros
                           / {Math.ceil(results.litrosFaltantes / 10)} charolas
                           para completar {results.tiendas} tiendas
-                        </p>
+                        </span>
+                        <div className="cv-card__bar" />
                       </motion.div>
                     )}
                   </>
