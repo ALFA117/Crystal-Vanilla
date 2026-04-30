@@ -93,6 +93,42 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                   if (item.type === 'simple') {
                     // En modo litros, la tarjeta de tiendas la maneja la tarjeta especial de litros
                     if (mode === 'litros' && section.id === 'tiendas' && item.key === 'tiendas') return null;
+
+                    // En modo litros, la tarjeta de Litros de Extracto muestra lo que el usuario TIENE
+                    if (mode === 'litros' && section.id === 'extracto' && item.key === 'litrosTotales') {
+                      return (
+                        <motion.div
+                          key={item.key}
+                          className="cv-card cv-card--simple"
+                          style={{ '--card-accent': accentColor }}
+                          initial={{ opacity: 0, scale: 0.75, y: 24 }}
+                          animate={{ opacity: 1, scale: 1,    y: 0  }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
+                          whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
+                        >
+                          <span className="cv-card__icon">{item.icon}</span>
+                          <p className="cv-card__label">{item.label}</p>
+                          <motion.span
+                            className="cv-card__number"
+                            key={inputValue}
+                            initial={{ scale: 1.25, color: '#E8A020' }}
+                            animate={{ scale: 1,    color: '#3B2A1A' }}
+                            transition={{ duration: 0.35 }}
+                          >
+                            {Number(inputValue).toLocaleString('es-MX')}
+                          </motion.span>
+                          <span className="cv-card__unit">litros disponibles</span>
+                          <span className="cv-card__desc">
+                            {results.litrosFaltantes === 0
+                              ? `Exacto para ${results.tiendas} tiendas`
+                              : `Necesitas ${results.litrosTotales.toLocaleString('es-MX')} · faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros`
+                            }
+                          </span>
+                          <div className="cv-card__bar" />
+                        </motion.div>
+                      );
+                    }
+
                     return (
                       <SimpleCard
                         key={item.key}

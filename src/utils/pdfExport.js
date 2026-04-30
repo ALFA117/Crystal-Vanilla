@@ -168,7 +168,25 @@ export function exportToPDF(results, mode, inputValue) {
       doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 5.5);
 
       if (item.type === 'simple') {
-        const val = results[item.key];
+        // En modo litros, extracto muestra lo que el usuario tiene (inputValue) no litrosTotales
+        const isLitrosExtracto = mode === 'litros' && section.id === 'extracto' && item.key === 'litrosTotales';
+        const val = isLitrosExtracto ? Number(inputValue) : results[item.key];
+        const cardH_actual = isLitrosExtracto ? 22 : 18;
+
+        // Redibujar tarjeta con altura correcta si es extracto en modo litros
+        if (isLitrosExtracto) {
+          txt(doc, C.card, 'fill');
+          doc.setDrawColor(...C.border);
+          doc.setLineWidth(0.3);
+          doc.roundedRect(cx, cy, colW, cardH_actual, 2, 2, 'FD');
+          txt(doc, secRgb, 'fill');
+          doc.rect(cx, cy, 2, cardH_actual, 'F');
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(7.5);
+          txt(doc, C.medium);
+          doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 5.5);
+        }
+
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
         txt(doc, C.dark);
@@ -176,7 +194,16 @@ export function exportToPDF(results, mode, inputValue) {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(7);
         txt(doc, C.medium);
-        doc.text(item.unit, cx + colW - 3, cy + 13.5, { align: 'right' });
+        doc.text(isLitrosExtracto ? 'litros disponibles' : item.unit, cx + colW - 3, cy + 13.5, { align: 'right' });
+
+        if (isLitrosExtracto) {
+          doc.setFontSize(6.5);
+          txt(doc, results.litrosFaltantes === 0 ? C.green : C.orange);
+          const subTxt = results.litrosFaltantes === 0
+            ? `Exacto para ${results.tiendas} tiendas`
+            : `Necesitas ${results.litrosTotales.toLocaleString('es-MX')} · faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros`;
+          doc.text(subTxt, cx + 4, cy + 19.5);
+        }
       } else {
         const pd = results[item.key];
         if (pd) {
