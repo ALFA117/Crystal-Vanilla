@@ -16,6 +16,10 @@ export default function InputSection({ mode, onCalculate }) {
       setError('Por favor ingresa un número válido mayor a 0');
       return;
     }
+    if (mode === 'litros' && num < 110) {
+      setError('Mínimo 110 litros — eso equivale a 1 tienda completa');
+      return;
+    }
     setError('');
     setRipple(true);
     setTimeout(() => setRipple(false), 600);
