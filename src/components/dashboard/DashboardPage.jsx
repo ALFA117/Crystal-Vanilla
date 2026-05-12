@@ -5,11 +5,13 @@ import { getAlmacen, getLogs } from '../../services/supabase';
 import InventoryPanel  from './InventoryPanel';
 import LogsPanel       from './LogsPanel';
 import UserManagement  from './UserManagement';
+import ChangePassword  from './ChangePassword';
 
 const TABS = [
   { id: 'inventario', label: '📦 Inventario' },
   { id: 'logs',       label: '📋 Actividad'  },
   { id: 'usuarios',   label: '👥 Usuarios',  adminOnly: true },
+  { id: 'password',   label: '🔑 Contraseña' },
 ];
 
 export default function DashboardPage({ onBack }) {
@@ -133,6 +135,9 @@ export default function DashboardPage({ onBack }) {
           )}
           {tab === 'usuarios' && isAdmin && (
             <UserManagement />
+          )}
+          {tab === 'password' && (
+            <ChangePassword />
           )}
         </motion.div>
       </AnimatePresence>

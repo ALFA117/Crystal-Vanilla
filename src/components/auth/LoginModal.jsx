@@ -57,13 +57,13 @@ export default function LoginModal({ onClose }) {
 
         <form className="cv-modal__form" onSubmit={handleSubmit} noValidate>
           <div className="cv-modal__field">
-            <label className="cv-modal__label">Usuario o correo</label>
+            <label className="cv-modal__label">Usuario</label>
             <div className="cv-modal__input-wrap">
               <span className="cv-modal__input-icon">👤</span>
               <input
                 type="text"
                 className="cv-modal__input"
-                placeholder="aldogaya  o  correo@ejemplo.com"
+                placeholder="Ej. AldoGaya2026"
                 value={identifier}
                 onChange={(e) => { setIdentifier(e.target.value); setError(''); }}
                 autoComplete="username"

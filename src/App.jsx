@@ -24,11 +24,10 @@ function AppContent() {
   const [inputValue, setInputValue] = useState(null);
   const [showLogin,  setShowLogin]  = useState(false);
 
-  // Si el usuario está logueado y hace clic en Inventario → va al Dashboard
+  // Inventario: logueado → dashboard, sin login → abre modal de login
   const handleInventario = () => {
-    if (user) { setPage('dashboard'); }
-    else      { setPage('inventario'); }
-    window.scrollTo({ top: 0 });
+    if (user) { setPage('dashboard'); window.scrollTo({ top: 0 }); }
+    else      { setShowLogin(true); }
   };
 
   const handleModeChange = (newMode) => {
@@ -64,8 +63,6 @@ function AppContent() {
                 key="dashboard"
                 onBack={() => setPage('calculator')}
               />
-            ) : page === 'inventario' ? (
-              <InventarioPage key="inventario" onBack={() => setPage('calculator')} />
             ) : (
               <motion.div
                 key="calculator"
