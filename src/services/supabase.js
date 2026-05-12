@@ -3,11 +3,19 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  || '';
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-if (!SUPABASE_URL || !SUPABASE_ANON) {
-  console.warn('[Supabase] Agrega VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env');
+// createClient lanza error si las vars están vacías — nunca debe romper el módulo
+let supabase = null;
+try {
+  if (SUPABASE_URL && SUPABASE_ANON) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+  } else {
+    console.warn('[Supabase] Variables de entorno no configuradas. Autenticación desactivada.');
+  }
+} catch (e) {
+  console.error('[Supabase] Error al inicializar:', e.message);
 }
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+export { supabase };
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
