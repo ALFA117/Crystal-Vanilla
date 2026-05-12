@@ -91,6 +91,42 @@
   transform-origin: left;
 }
 
+/* ── Top navigation bar ──────────────────────────────────── */
+.cv-topnav {
+  background: linear-gradient(90deg, #3B2A1A 0%, #4A3520 50%, #3B2A1A 100%);
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 2px solid #D4A017;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.cv-topnav__btn {
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  color: rgba(250,247,240,0.7);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.45rem 1.3rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.cv-topnav__btn:hover {
+  color: #F5C842;
+  border-color: rgba(212,160,23,0.4);
+  background: rgba(212,160,23,0.08);
+}
+.cv-topnav__btn--active {
+  color: #F5C842;
+  border-color: #D4A017;
+  background: rgba(212,160,23,0.15);
+}
+
 /* ── Main content ─────────────────────────────────────────── */
 .cv-main {
   flex: 1;

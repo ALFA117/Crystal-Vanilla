@@ -1,53 +1,61 @@
 -- ================================================================
--- Crystal Vanilla — Seed de usuarios
---
--- PASO PREVIO: Crear los usuarios en
--- Supabase Dashboard → Authentication → Users → Add User
---
---   Usuario 1 (Admin / Jefe):
---     Email:    aldogaya@crystalvanilla.com
---     Password: PUPANINA
---
---   Usuario 2 (Empleado):
---     Email:    eulaliolopez@crystalvanilla.com
---     Password: LALOVANILLA
---
--- Una vez creados, ejecutar este script.
+-- Crystal Vanilla — Seed de usuarios (versión UPSERT)
+-- Ejecutar en: Supabase Dashboard → SQL Editor
 -- ================================================================
 
--- ── Ver qué usuarios existen en Auth ────────────────────────────────────────
-SELECT id, email FROM auth.users;
+-- ── PASO 1: Ver qué hay en auth.users ────────────────────────────────────────
+-- Si este SELECT regresa 0 filas, primero crea los usuarios en
+-- Authentication → Users → Add User y luego vuelve a correr este script.
+SELECT id, email, created_at FROM auth.users ORDER BY created_at;
 
--- ── Insertar perfiles (si el trigger no los creó) ────────────────────────────
+-- ── PASO 2: UPSERT — inserta o actualiza, siempre fuerza los datos ───────────
 
-INSERT INTO public.usuarios (id, nombre, username, rol)
-SELECT au.id, 'Aldo Gaya', 'AldoGaya2026', 'admin'
+INSERT INTO public.usuarios (id, nombre, username, rol, activo)
+SELECT
+  au.id,
+  'Aldo Gaya',
+  'AldoGaya2026',
+  'admin',
+  true
 FROM auth.users au
 WHERE au.email = 'aldogaya@crystalvanilla.com'
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  nombre   = EXCLUDED.nombre,
+  username = EXCLUDED.username,
+  rol      = EXCLUDED.rol,
+  activo   = EXCLUDED.activo,
+  updated_at = now();
 
-INSERT INTO public.usuarios (id, nombre, username, rol)
-SELECT au.id, 'Eulalio Lopez', 'EULALIO2026', 'empleado'
+INSERT INTO public.usuarios (id, nombre, username, rol, activo)
+SELECT
+  au.id,
+  'Eulalio Lopez',
+  'EULALIO2026',
+  'empleado',
+  true
 FROM auth.users au
 WHERE au.email = 'eulaliolopez@crystalvanilla.com'
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  nombre   = EXCLUDED.nombre,
+  username = EXCLUDED.username,
+  rol      = EXCLUDED.rol,
+  activo   = EXCLUDED.activo,
+  updated_at = now();
 
--- ── Actualizar datos (por si el trigger los creó con username incorrecto) ────
-
-UPDATE public.usuarios
-SET nombre = 'Aldo Gaya', username = 'AldoGaya2026', rol = 'admin', activo = true
-FROM auth.users au
-WHERE public.usuarios.id = au.id
-  AND au.email = 'aldogaya@crystalvanilla.com';
-
-UPDATE public.usuarios
-SET nombre = 'Eulalio Lopez', username = 'EULALIO2026', rol = 'empleado', activo = true
-FROM auth.users au
-WHERE public.usuarios.id = au.id
-  AND au.email = 'eulaliolopez@crystalvanilla.com';
-
--- ── Verificar resultado ───────────────────────────────────────────────────────
-SELECT u.nombre, u.username, u.rol, u.activo, au.email
+-- ── PASO 3: Verificar ────────────────────────────────────────────────────────
+SELECT
+  u.nombre,
+  u.username,
+  u.rol,
+  u.activo,
+  au.email
 FROM public.usuarios u
 JOIN auth.users au ON au.id = u.id
 ORDER BY u.rol DESC;
+
+-- ── Si el SELECT de arriba sigue vacío: ──────────────────────────────────────
+-- Significa que los emails no existen en auth.users.
+-- Ve a: Authentication → Users y confirma que existen exactamente:
+--   aldogaya@crystalvanilla.com
+--   eulaliolopez@crystalvanilla.com
+-- Con esos emails exactos (sin espacios extra).

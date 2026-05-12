@@ -53,18 +53,6 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
             >
               📄 Descargar PDF
             </motion.button>
-
-            <motion.button
-              className="cv-btn-inventario"
-              onClick={onInventario}
-              whileHover={{ scale: 1.05, boxShadow: '0 6px 24px rgba(212,160,23,0.3)' }}
-              whileTap={{ scale: 0.96 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              📋 Inventario
-            </motion.button>
           </div>
         </motion.div>
 

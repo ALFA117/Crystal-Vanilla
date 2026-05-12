@@ -7,7 +7,6 @@ import Header              from './components/Header';
 import ModeSelector        from './components/ModeSelector';
 import InputSection        from './components/InputSection';
 import ResultsGrid         from './components/ResultsGrid';
-import InventarioPage      from './components/InventarioPage';
 import Footer              from './components/Footer';
 import LoginModal          from './components/auth/LoginModal';
 import DashboardPage       from './components/dashboard/DashboardPage';
@@ -17,23 +16,22 @@ import { calculate }       from './utils/calculations';
 import './App.css';
 
 function AppContent() {
-  const { user } = useAuth();
+  const { user, perfil } = useAuth();
   const [page,       setPage]       = useState('calculator');
   const [mode,       setMode]       = useState('litros');
   const [results,    setResults]    = useState(null);
   const [inputValue, setInputValue] = useState(null);
   const [showLogin,  setShowLogin]  = useState(false);
 
-  // Inventario: logueado → dashboard, sin login → abre modal de login
+  const goTo = (dest) => { setPage(dest); window.scrollTo({ top: 0 }); };
+
   const handleInventario = () => {
-    if (user) { setPage('dashboard'); window.scrollTo({ top: 0 }); }
-    else      { setShowLogin(true); }
+    if (user) goTo('dashboard');
+    else setShowLogin(true);
   };
 
   const handleModeChange = (newMode) => {
-    setMode(newMode);
-    setResults(null);
-    setInputValue(null);
+    setMode(newMode); setResults(null); setInputValue(null);
   };
 
   const handleCalculate = (value) => {
@@ -52,8 +50,27 @@ function AppContent() {
       <div className="cv-app__content">
         <Header
           onLoginClick={() => setShowLogin(true)}
-          onDashboardClick={() => { setPage('dashboard'); window.scrollTo({ top: 0 }); }}
+          onDashboardClick={() => goTo('dashboard')}
         />
+
+        {/* ── Barra de navegación ── */}
+        <nav className="cv-topnav">
+          <motion.button
+            className={`cv-topnav__btn ${page === 'calculator' ? 'cv-topnav__btn--active' : ''}`}
+            onClick={() => goTo('calculator')}
+            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+          >
+            📊 Calculadora
+          </motion.button>
+
+          <motion.button
+            className={`cv-topnav__btn ${page === 'dashboard' ? 'cv-topnav__btn--active' : ''}`}
+            onClick={handleInventario}
+            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+          >
+            📦 {user ? (perfil?.rol === 'admin' ? 'Panel Admin' : 'Inventario') : 'Inventario'}
+          </motion.button>
+        </nav>
 
         <main className="cv-main">
           <AnimatePresence mode="wait">
@@ -61,7 +78,7 @@ function AppContent() {
             {page === 'dashboard' ? (
               <DashboardPage
                 key="dashboard"
-                onBack={() => setPage('calculator')}
+                onBack={() => goTo('calculator')}
               />
             ) : (
               <motion.div
@@ -98,7 +115,6 @@ function AppContent() {
         <Footer />
       </div>
 
-      {/* Modal de login */}
       <AnimatePresence>
         {showLogin && <LoginModal key="login-modal" onClose={() => setShowLogin(false)} />}
       </AnimatePresence>
