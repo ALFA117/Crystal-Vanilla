@@ -123,10 +123,6 @@ export default function LoginModal({ onClose }) {
             )}
           </motion.button>
 
-          <p className="cv-modal__forgot">
-            ¿Olvidaste tu contraseña?{' '}
-            <span className="cv-modal__forgot-link">Contacta al administrador</span>
-          </p>
         </form>
       </motion.div>
     </motion.div>

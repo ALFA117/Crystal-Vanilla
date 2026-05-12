@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from './contexts/AuthContext';
 
 import ParticlesBackground from './components/ParticlesBackground';
 import Header              from './components/Header';
@@ -16,11 +17,19 @@ import { calculate }       from './utils/calculations';
 import './App.css';
 
 function AppContent() {
+  const { user } = useAuth();
   const [page,       setPage]       = useState('calculator');
   const [mode,       setMode]       = useState('litros');
   const [results,    setResults]    = useState(null);
   const [inputValue, setInputValue] = useState(null);
   const [showLogin,  setShowLogin]  = useState(false);
+
+  // Si el usuario está logueado y hace clic en Inventario → va al Dashboard
+  const handleInventario = () => {
+    if (user) { setPage('dashboard'); }
+    else      { setPage('inventario'); }
+    window.scrollTo({ top: 0 });
+  };
 
   const handleModeChange = (newMode) => {
     setMode(newMode);
@@ -81,7 +90,7 @@ function AppContent() {
                   results={results}
                   mode={mode}
                   inputValue={inputValue}
-                  onInventario={() => { setPage('inventario'); window.scrollTo({ top: 0 }); }}
+                  onInventario={handleInventario}
                 />
               </motion.div>
             )}
