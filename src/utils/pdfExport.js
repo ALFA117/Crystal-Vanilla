@@ -168,13 +168,17 @@ export function exportToPDF(results, mode, inputValue) {
       doc.text(safe(`${item.icon}  ${item.label}`), cx + 4, cy + 5.5);
 
       if (item.type === 'simple') {
-        // En modo litros, extracto muestra lo que el usuario tiene (inputValue) no litrosTotales
         const isLitrosExtracto = mode === 'litros' && section.id === 'extracto' && item.key === 'litrosTotales';
-        const val = isLitrosExtracto ? Number(inputValue) : results[item.key];
-        const cardH_actual = isLitrosExtracto ? 22 : 18;
+        const isCajasLitros    = mode === 'litros' && section.id === 'cajas'    && item.key === 'cajasTotal';
+        const isBotellasLitros = mode === 'litros' && section.id === 'botellas' && item.key === 'botellasTotal';
+        const needsDesc        = isLitrosExtracto || isCajasLitros || isBotellasLitros;
 
-        // Redibujar tarjeta con altura correcta si es extracto en modo litros
-        if (isLitrosExtracto) {
+        // Determinar valor a mostrar
+        const val = isLitrosExtracto ? Number(inputValue) : results[item.key];
+
+        // Tarjeta más alta si tiene desc
+        const cardH_actual = needsDesc ? 22 : 18;
+        if (needsDesc) {
           txt(doc, C.card, 'fill');
           doc.setDrawColor(...C.border);
           doc.setLineWidth(0.3);
@@ -194,8 +198,15 @@ export function exportToPDF(results, mode, inputValue) {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(7);
         txt(doc, C.medium);
-        doc.text(isLitrosExtracto ? 'litros disponibles' : item.unit, cx + colW - 3, cy + 13.5, { align: 'right' });
 
+        // Unidad contextual
+        let unitTxt = item.unit;
+        if (isLitrosExtracto) unitTxt = 'litros disponibles';
+        if (isCajasLitros)    unitTxt = `cajas (${results.tiendasCompletas} tiendas)`;
+        if (isBotellasLitros) unitTxt = `bots. (${results.tiendasCompletas} tiendas)`;
+        doc.text(unitTxt, cx + colW - 3, cy + 13.5, { align: 'right' });
+
+        // Sub-texto con info parcial
         if (isLitrosExtracto) {
           doc.setFontSize(6.5);
           txt(doc, results.litrosFaltantes === 0 ? C.green : C.orange);
@@ -203,6 +214,22 @@ export function exportToPDF(results, mode, inputValue) {
             ? `Exacto para ${results.tiendas} tiendas`
             : `Necesitas ${results.litrosTotales.toLocaleString('es-MX')} · faltan ${results.litrosFaltantes.toLocaleString('es-MX')} litros`;
           doc.text(subTxt, cx + 4, cy + 19.5);
+        }
+        if (isCajasLitros && results.cajasFaltan > 0) {
+          doc.setFontSize(6.5);
+          txt(doc, C.orange);
+          doc.text(
+            `Tienda ${results.tiendas}: tienes ${results.cajasPartial} · faltan ${results.cajasFaltan} cajas`,
+            cx + 4, cy + 19.5
+          );
+        }
+        if (isBotellasLitros && results.bolsasFaltan > 0) {
+          doc.setFontSize(6.5);
+          txt(doc, C.orange);
+          doc.text(
+            `Tienda ${results.tiendas}: tienes ${results.botellasPartial} · faltan ${results.bolsasFaltan} bots.`,
+            cx + 4, cy + 19.5
+          );
         }
       } else {
         const pd = results[item.key];

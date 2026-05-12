@@ -38,21 +38,34 @@ export function calculate(mode, rawValue) {
     tiendas = Math.ceil(value);
   }
 
-  const litrosTotales = tiendas * 110;
-  const botellasTotal = tiendas * 220;
-  const cajasTotal    = tiendas * 11;
+  const litrosTotales = tiendas * 110;  // total necesario para tiendas (ceil)
 
   // ── Análisis de litros (solo modo litros) ─────────────────────
-  // litrosFaltantes: cuántos litros más se necesitan para la última tienda
-  // litrosSobrantes: cuántos litros quedan si solo haces tiendas completas
-  // Nota: litrosFaltantes + litrosSobrantes = 110 (a menos que sea exacto)
-  let litrosFaltantes = null;
-  let litrosSobrantes = null;
+  let litrosFaltantes  = null;
+  let litrosSobrantes  = null;
   let tiendasCompletas = null;
   if (mode === 'litros') {
-    litrosFaltantes  = litrosTotales - value;            // ≥ 0 siempre con ceil
     tiendasCompletas = Math.floor(value / 110);
-    litrosSobrantes  = value - tiendasCompletas * 110;   // 0..109
+    litrosFaltantes  = litrosTotales - value;           // ≥ 0 siempre con ceil
+    litrosSobrantes  = value - tiendasCompletas * 110;  // 0..109
+  }
+
+  // En modo litros las cantidades de producción se basan en tiendasCompletas
+  // (lo que realmente se puede producir con los litros disponibles)
+  const base         = mode === 'litros' ? tiendasCompletas : tiendas;
+  const cajasTotal   = base * 11;
+  const botellasTotal = base * 220;
+
+  // Datos de la tienda parcial (modo litros con sobrante > 0)
+  let cajasPartial    = null;
+  let cajasFaltan     = null;
+  let botellasPartial = null;
+  let bolsasFaltan    = null;
+  if (mode === 'litros' && litrosSobrantes > 0) {
+    cajasPartial    = Math.floor(litrosSobrantes / 10);
+    cajasFaltan     = 11 - cajasPartial;
+    botellasPartial = cajasPartial * 20;
+    bolsasFaltan    = 220 - botellasPartial;
   }
 
   return {
@@ -61,9 +74,13 @@ export function calculate(mode, rawValue) {
     litrosTotales,
     cajasTotal,
     botellasTotal,
-    litrosFaltantes,    // null | 0 (exacto) | >0 (faltan litros)
-    litrosSobrantes,    // null | 0 (exacto) | >0 (litros que sobran)
-    tiendasCompletas,   // null | number
+    litrosFaltantes,
+    litrosSobrantes,
+    tiendasCompletas,
+    cajasPartial,     // cajas disponibles de la tienda parcial (litros mode)
+    cajasFaltan,      // cajas que faltan para completar la tienda parcial
+    botellasPartial,  // botellas disponibles de la tienda parcial
+    bolsasFaltan,     // botellas que faltan para completar la tienda parcial
 
     // ── Con desglose de paquetes ────────────────────────────────
     paquetesCajas:   pkgInfo(cajasTotal,    20,   'cajas'),

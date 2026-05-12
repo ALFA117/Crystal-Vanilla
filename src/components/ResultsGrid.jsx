@@ -94,6 +94,66 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                     // En modo litros, la tarjeta de tiendas la maneja la tarjeta especial de litros
                     if (mode === 'litros' && section.id === 'tiendas' && item.key === 'tiendas') return null;
 
+                    // En modo litros: Cajas Totales muestra lo de tiendasCompletas + info tienda parcial
+                    if (mode === 'litros' && section.id === 'cajas' && item.key === 'cajasTotal') {
+                      return (
+                        <motion.div
+                          key={item.key}
+                          className="cv-card cv-card--simple"
+                          style={{ '--card-accent': accentColor }}
+                          initial={{ opacity: 0, scale: 0.75, y: 24 }}
+                          animate={{ opacity: 1, scale: 1,    y: 0  }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
+                          whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
+                        >
+                          <span className="cv-card__icon">{item.icon}</span>
+                          <p className="cv-card__label">Cajas Totales</p>
+                          <motion.span className="cv-card__number" key={results.cajasTotal}
+                            initial={{ scale: 1.25, color: '#E8A020' }} animate={{ scale: 1, color: '#3B2A1A' }}
+                            transition={{ duration: 0.35 }}>
+                            {results.cajasTotal.toLocaleString('es-MX')}
+                          </motion.span>
+                          <span className="cv-card__unit">cajas ({results.tiendasCompletas} tiendas)</span>
+                          {results.cajasPartial != null && results.cajasFaltan > 0 && (
+                            <span className="cv-card__desc">
+                              Tienda {results.tiendas}: tienes {results.cajasPartial} · faltan {results.cajasFaltan} cajas
+                            </span>
+                          )}
+                          <div className="cv-card__bar" />
+                        </motion.div>
+                      );
+                    }
+
+                    // En modo litros: Botellas Totales muestra lo de tiendasCompletas + info tienda parcial
+                    if (mode === 'litros' && section.id === 'botellas' && item.key === 'botellasTotal') {
+                      return (
+                        <motion.div
+                          key={item.key}
+                          className="cv-card cv-card--simple"
+                          style={{ '--card-accent': accentColor }}
+                          initial={{ opacity: 0, scale: 0.75, y: 24 }}
+                          animate={{ opacity: 1, scale: 1,    y: 0  }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
+                          whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
+                        >
+                          <span className="cv-card__icon">{item.icon}</span>
+                          <p className="cv-card__label">Botellas Totales</p>
+                          <motion.span className="cv-card__number" key={results.botellasTotal}
+                            initial={{ scale: 1.25, color: '#E8A020' }} animate={{ scale: 1, color: '#3B2A1A' }}
+                            transition={{ duration: 0.35 }}>
+                            {results.botellasTotal.toLocaleString('es-MX')}
+                          </motion.span>
+                          <span className="cv-card__unit">botellas ({results.tiendasCompletas} tiendas)</span>
+                          {results.botellasPartial != null && results.bolsasFaltan > 0 && (
+                            <span className="cv-card__desc">
+                              Tienda {results.tiendas}: tienes {results.botellasPartial} · faltan {results.bolsasFaltan} botellas
+                            </span>
+                          )}
+                          <div className="cv-card__bar" />
+                        </motion.div>
+                      );
+                    }
+
                     // En modo litros, la tarjeta de Litros de Extracto muestra lo que el usuario TIENE
                     if (mode === 'litros' && section.id === 'extracto' && item.key === 'litrosTotales') {
                       return (
