@@ -8,15 +8,19 @@ import InputSection        from './components/InputSection';
 import ResultsGrid         from './components/ResultsGrid';
 import InventarioPage      from './components/InventarioPage';
 import Footer              from './components/Footer';
+import LoginModal          from './components/auth/LoginModal';
+import DashboardPage       from './components/dashboard/DashboardPage';
+import { AuthProvider }    from './contexts/AuthContext';
 
 import { calculate }       from './utils/calculations';
 import './App.css';
 
-export default function App() {
-  const [page,       setPage]       = useState('calculator'); // 'calculator' | 'inventario'
+function AppContent() {
+  const [page,       setPage]       = useState('calculator');
   const [mode,       setMode]       = useState('litros');
   const [results,    setResults]    = useState(null);
   const [inputValue, setInputValue] = useState(null);
+  const [showLogin,  setShowLogin]  = useState(false);
 
   const handleModeChange = (newMode) => {
     setMode(newMode);
@@ -29,9 +33,7 @@ export default function App() {
     setInputValue(value);
     setResults(res);
     setTimeout(() => {
-      document.getElementById('cv-results-anchor')?.scrollIntoView({
-        behavior: 'smooth', block: 'start',
-      });
+      document.getElementById('cv-results-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 150);
   };
 
@@ -40,12 +42,20 @@ export default function App() {
       <ParticlesBackground />
 
       <div className="cv-app__content">
-        <Header />
+        <Header
+          onLoginClick={() => setShowLogin(true)}
+          onDashboardClick={() => { setPage('dashboard'); window.scrollTo({ top: 0 }); }}
+        />
 
         <main className="cv-main">
           <AnimatePresence mode="wait">
 
-            {page === 'inventario' ? (
+            {page === 'dashboard' ? (
+              <DashboardPage
+                key="dashboard"
+                onBack={() => setPage('calculator')}
+              />
+            ) : page === 'inventario' ? (
               <InventarioPage key="inventario" onBack={() => setPage('calculator')} />
             ) : (
               <motion.div
@@ -81,6 +91,19 @@ export default function App() {
 
         <Footer />
       </div>
+
+      {/* Modal de login */}
+      <AnimatePresence>
+        {showLogin && <LoginModal key="login-modal" onClose={() => setShowLogin(false)} />}
+      </AnimatePresence>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

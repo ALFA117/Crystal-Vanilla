@@ -1,53 +1,86 @@
-/**
- * Crystal Vanilla — Supabase client
- *
- * Para activar:
- *   1. npm install @supabase/supabase-js
- *   2. Crear archivo .env en la raíz con:
- *        VITE_SUPABASE_URL=https://xxxx.supabase.co
- *        VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *   3. Descomentar el bloque de abajo
- *
- * Tabla sugerida en Supabase:
- *   CREATE TABLE inventario (
- *     id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
- *     updated_at    timestamptz DEFAULT now(),
- *     bolsas_botellas   int DEFAULT 0,
- *     cajas_tapas       int DEFAULT 0,
- *     cajas_charolas    int DEFAULT 0
- *   );
- */
+import { createClient } from '@supabase/supabase-js';
 
-// import { createClient } from '@supabase/supabase-js'
-//
-// export const supabase = createClient(
-//   import.meta.env.VITE_SUPABASE_URL,
-//   import.meta.env.VITE_SUPABASE_ANON_KEY
-// )
-//
-// /** Obtiene el registro de inventario actual */
-// export async function getInventario() {
-//   const { data, error } = await supabase
-//     .from('inventario')
-//     .select('*')
-//     .order('updated_at', { ascending: false })
-//     .limit(1)
-//     .single()
-//   if (error) throw error
-//   return data
-// }
-//
-// /** Guarda / actualiza el inventario */
-// export async function saveInventario({ bolsas_botellas, cajas_tapas, cajas_charolas }) {
-//   const { error } = await supabase
-//     .from('inventario')
-//     .upsert({
-//       bolsas_botellas,
-//       cajas_tapas,
-//       cajas_charolas,
-//       updated_at: new Date().toISOString(),
-//     })
-//   if (error) throw error
-// }
+const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  || '';
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-export const supabase = null // placeholder — pendiente de conexión
+if (!SUPABASE_URL || !SUPABASE_ANON) {
+  console.warn('[Supabase] Agrega VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en tu archivo .env');
+}
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
+export async function loginWithEmailOrUsername(identifier, password) {
+  let email = identifier;
+  if (!identifier.includes('@')) {
+    const { data, error } = await supabase.rpc('get_email_by_username', { p_username: identifier });
+    if (error || !data) throw new Error('Usuario no encontrado');
+    email = data;
+  }
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}
+
+// ── Usuarios ──────────────────────────────────────────────────────────────────
+
+export async function getPerfil(userId) {
+  const { data, error } = await supabase.from('usuarios').select('*').eq('id', userId).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getAllUsuarios() {
+  const { data, error } = await supabase.from('usuarios').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePerfil(userId, updates) {
+  const { error } = await supabase.from('usuarios').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', userId);
+  if (error) throw error;
+}
+
+export async function toggleUsuarioActivo(userId, activo) {
+  return updatePerfil(userId, { activo });
+}
+
+export async function updateRolUsuario(userId, rol) {
+  return updatePerfil(userId, { rol });
+}
+
+// ── Almacén ───────────────────────────────────────────────────────────────────
+
+export async function getAlmacen() {
+  const { data, error } = await supabase.from('almacen').select('*').order('created_at', { ascending: false }).limit(1).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateAlmacen(almacenId, campos) {
+  const { error } = await supabase.from('almacen').update({ ...campos, updated_at: new Date().toISOString() }).eq('id', almacenId);
+  if (error) throw error;
+}
+
+// ── Logs ──────────────────────────────────────────────────────────────────────
+
+export async function registrarLog(usuarioId, accion, descripcion) {
+  const { error } = await supabase.from('logs').insert({ usuario_id: usuarioId, accion, descripcion });
+  if (error) console.warn('[Log]', error.message);
+}
+
+export async function getLogs(limit = 50) {
+  const { data, error } = await supabase
+    .from('logs')
+    .select('*, usuarios(nombre, username, rol)')
+    .order('fecha', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data;
+}
