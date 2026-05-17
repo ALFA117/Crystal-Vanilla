@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const ITEMS = [
   { key: 'paquetes_botellas',  label: 'Paquetes de Botellas',       icon: '🧴', unit: 'paquetes', equiv: '1 paquete = 200 botellas' },
   { key: 'paquetes_charolas',  label: 'Paquetes de Charolas',       icon: '📦', unit: 'paquetes', equiv: '1 paquete = 20 charolas'  },
-  { key: 'paquetes_tapas',     label: 'Paquetes de Tapas',          icon: '🔵', unit: 'paquetes', equiv: '1 paquete de tapas'        },
+  { key: 'paquetes_tapas',     label: 'Cajas de Tapas',             icon: '🔵', unit: 'cajas',    equiv: '1 caja de tapas'           },
   { key: 'paquetes_etiquetas', label: 'Cajas de Rollos Etiquetas',  icon: '🏷️', unit: 'cajas',    equiv: '1 caja de rollos'          },
 ];
 
