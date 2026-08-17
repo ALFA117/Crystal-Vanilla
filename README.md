@@ -1,16 +1,26 @@
-# React + Vite
+# Crystal Vanilla
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production calculator and inventory manager for a vanilla-extract business, built as a freelance client project.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Production calculator** — convert available extract (liters) into sellable units (boxes, bottles, labels), or work backwards from a target number of stores to supply. Enforces the client's real minimum batch size (110L = 1 complete store run) and shows exactly what's short of the next full batch.
+- **PDF export** — every calculation can be downloaded as a printable report (`jspdf` + `html2canvas`).
+- **Inventory** — track stock of bottles, trays, caps, and labels.
+- **Role-based login** — `admin` / `employee` accounts via Supabase, gating who can edit inventory vs. just run calculations.
 
-## React Compiler
+See [`MANUAL_USUARIO.md`](./MANUAL_USUARIO.md) (end-user guide) and [`MANUAL_TECNICO.md`](./MANUAL_TECNICO.md) (technical reference) for full detail.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack
 
-## Expanding the ESLint configuration
+- React 19 + Vite
+- Supabase (auth + data)
+- framer-motion, tsparticles (UI)
+- jspdf + html2canvas (PDF export)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
