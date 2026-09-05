@@ -120,6 +120,31 @@ CREATE POLICY "usuarios_update_own" ON public.usuarios
 CREATE POLICY "usuarios_update_admin" ON public.usuarios
   FOR UPDATE USING (public.is_admin());
 
+-- Un empleado puede actualizar su propia fila (ultimo_login, nombre, etc.) por la
+-- policy de arriba, pero esa policy no restringe QUÉ columnas cambia: sin este
+-- trigger, cualquier empleado autenticado podía mandar { rol: 'admin' } o
+-- { activo: true } sobre su propia fila y auto-promoverse. Solo un admin puede
+-- tocar esas dos columnas.
+CREATE OR REPLACE FUNCTION public.usuarios_prevent_privilege_escalation()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NOT public.is_admin() THEN
+    IF NEW.rol IS DISTINCT FROM OLD.rol THEN
+      RAISE EXCEPTION 'Solo un admin puede cambiar el rol de un usuario';
+    END IF;
+    IF NEW.activo IS DISTINCT FROM OLD.activo THEN
+      RAISE EXCEPTION 'Solo un admin puede activar/desactivar un usuario';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+DROP TRIGGER IF EXISTS usuarios_prevent_escalation ON public.usuarios;
+CREATE TRIGGER usuarios_prevent_escalation
+  BEFORE UPDATE ON public.usuarios
+  FOR EACH ROW EXECUTE FUNCTION public.usuarios_prevent_privilege_escalation();
+
 CREATE POLICY "usuarios_insert_trigger" ON public.usuarios
   FOR INSERT WITH CHECK (true);  -- el trigger lo maneja con SECURITY DEFINER
 
@@ -140,8 +165,10 @@ CREATE POLICY "almacen_modify_admin" ON public.almacen
 DROP POLICY IF EXISTS "logs_select" ON public.logs;
 DROP POLICY IF EXISTS "logs_insert" ON public.logs;
 
+-- Los logs son bitácora de auditoría: solo un admin debería poder leerlos,
+-- no cualquier empleado autenticado.
 CREATE POLICY "logs_select" ON public.logs
-  FOR SELECT USING (auth.role() = 'authenticated');
+  FOR SELECT USING (public.is_admin());
 
 CREATE POLICY "logs_insert" ON public.logs
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
@@ -154,7 +181,7 @@ ON CONFLICT DO NOTHING;
 -- ── 10. INSTRUCCIONES USUARIO INICIAL (Aldo Gaya) ────────────────────────────
 --
 --  PASO 1: Ir a Supabase Dashboard → Authentication → Users → Add User
---  PASO 2: Email: aldogaya@crystalvanilla.com  |  Password: PUPANINA
+--  PASO 2: Email: aldogaya@crystalvanilla.com  |  Password: (elige una nueva, no la reuses de otro sitio)
 --  PASO 3: Después de crearlo, ejecutar este UPDATE:
 --
 --    UPDATE public.usuarios

@@ -35,11 +35,8 @@ Crystal Vanilla es la herramienta web para:
 2. Ingresa tu **usuario** y **contraseña** (proporcionados por el administrador).
 3. Una vez dentro, el botón cambiará para mostrar tu nombre y rol (`admin` o `empleado`).
 
-### Usuarios de ejemplo (deben cambiarse al recibir el sistema)
-| Rol | Usuario | Contraseña |
-|---|---|---|
-| Administrador | `AldoGaya2026` | `PUPANINA` |
-| Empleado | `EULALIO2026` | `LALOVANILLA` |
+### Usuarios de ejemplo
+Pide las credenciales reales al administrador del sistema — ya no se documentan aquí en texto plano, porque este manual vive en un repositorio público.
 
 ---
 

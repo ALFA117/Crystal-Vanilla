@@ -107,12 +107,9 @@ database/
 - **empleado**: solo ve el resumen de inventario (tarjetas + "Otros") y puede cambiar su propia contraseña. No ve las pestañas de Inventario/Actividad/Usuarios.
 
 ### Usuarios iniciales (creados por `database/reset_completo.sql`)
-| Rol | Usuario | Contraseña |
-|---|---|---|
-| admin | `AldoGaya2026` | `PUPANINA` |
-| empleado | `EULALIO2026` | `LALOVANILLA` |
+El script pide las passwords reales antes de correr (`CAMBIA_ESTA_PASSWORD_ADMIN` / `CAMBIA_ESTA_PASSWORD_EMPLEADO`) — ya no se documentan credenciales reales aquí porque este manual vive en un repositorio público.
 
-> ⚠️ Se recomienda cambiar estas contraseñas desde el panel ("🔑 Contraseña") al recibir el proyecto.
+> ⚠️ Cambia esas contraseñas desde el panel ("🔑 Contraseña") en cuanto el proyecto quede en manos del cliente.
 
 ---
 

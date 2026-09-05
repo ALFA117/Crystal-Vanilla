@@ -166,18 +166,18 @@ DECLARE
   uid_admin UUID := gen_random_uuid();
   uid_emp   UUID := gen_random_uuid();
 BEGIN
-  -- Admin: AldoGaya2026 / PUPANINA
+  -- Admin: reemplaza CAMBIA_ESTA_PASSWORD_ADMIN por una password real antes de correr este script.
   INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-  VALUES (uid_admin, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'aldogaya@crystalvanilla.internal', crypt('PUPANINA', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Aldo Gaya","username":"AldoGaya2026","rol":"admin"}', now(), now(), '', '', '', '');
+  VALUES (uid_admin, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'aldogaya@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_ADMIN', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Aldo Gaya","username":"AldoGaya2026","rol":"admin"}', now(), now(), '', '', '', '');
   INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
   VALUES (uid_admin, uid_admin, 'aldogaya@crystalvanilla.internal', json_build_object('sub', uid_admin, 'email', 'aldogaya@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
   INSERT INTO public.usuarios (id, nombre, username, rol, activo)
   VALUES (uid_admin, 'Aldo Gaya', 'AldoGaya2026', 'admin', true)
   ON CONFLICT (id) DO UPDATE SET nombre=EXCLUDED.nombre, username=EXCLUDED.username, rol=EXCLUDED.rol, activo=EXCLUDED.activo;
 
-  -- Empleado: EULALIO2026 / LALOVANILLA
+  -- Empleado: reemplaza CAMBIA_ESTA_PASSWORD_EMPLEADO por una password real antes de correr este script.
   INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-  VALUES (uid_emp, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'eulalio@crystalvanilla.internal', crypt('LALOVANILLA', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Eulalio Lopez","username":"EULALIO2026","rol":"empleado"}', now(), now(), '', '', '', '');
+  VALUES (uid_emp, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'eulalio@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_EMPLEADO', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Eulalio Lopez","username":"EULALIO2026","rol":"empleado"}', now(), now(), '', '', '', '');
   INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
   VALUES (uid_emp, uid_emp, 'eulalio@crystalvanilla.internal', json_build_object('sub', uid_emp, 'email', 'eulalio@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
   INSERT INTO public.usuarios (id, nombre, username, rol, activo)
