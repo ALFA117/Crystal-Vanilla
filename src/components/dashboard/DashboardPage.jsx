@@ -6,6 +6,7 @@ import InventoryPanel  from './InventoryPanel';
 import LogsPanel       from './LogsPanel';
 import UserManagement  from './UserManagement';
 import ChangePassword  from './ChangePassword';
+import { Glyph, withGlyph } from '../Glyph';
 
 const SUMMARY_ITEMS = [
   { key: 'paquetes_botellas',  label: 'Paquetes de Botellas', icon: '🧴', sub: 'paquetes × 200 botellas' },
@@ -56,11 +57,11 @@ export default function DashboardPage({ onBack }) {
             initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.07 }}
             whileHover={{ scale: 1.05, boxShadow: '0 8px 24px rgba(212,160,23,0.3)' }}>
-            <span className="cv-dash__summary-icon">{item.icon}</span>
+            <span className="cv-dash__summary-icon"><Glyph i={item.icon} /></span>
             <span className="cv-dash__summary-value">
               {(almacen[item.key] ?? 0).toLocaleString('es-MX')}
             </span>
-            <span className="cv-dash__summary-label">{item.label}</span>
+            <span className="cv-dash__summary-label">{withGlyph(item.label)}</span>
             <span className="cv-dash__summary-sub">{item.sub}</span>
           </motion.div>
         ))}
@@ -69,7 +70,7 @@ export default function DashboardPage({ onBack }) {
       {/* Otros artículos (solo si hay) */}
       {parseOtros(almacen.otros).length > 0 && (
         <div className="cv-dash-panel cv-dash__otros-view">
-          <h4 className="cv-dash-otros__title">📋 Otros artículos</h4>
+          <h4 className="cv-dash-otros__title"><Glyph i="📋" /> Otros artículos</h4>
           <div className="cv-dash-otros__list">
             {parseOtros(almacen.otros).map((o) => (
               <div key={o.id} className="cv-dash-otros__row">
@@ -103,7 +104,7 @@ export default function DashboardPage({ onBack }) {
         </div>
         <motion.button className="cv-dash-btn cv-dash-btn--logout" onClick={handleLogout}
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-          🚪 Salir
+          <Glyph i="🚪" /> Salir
         </motion.button>
       </div>
 
@@ -123,7 +124,7 @@ export default function DashboardPage({ onBack }) {
               <button key={t.id}
                 className={`cv-dash__tab ${tab === t.id ? 'cv-dash__tab--active' : ''}`}
                 onClick={() => setTab(t.id)}>
-                {t.label}
+                {withGlyph(t.label)}
               </button>
             ))}
           </div>

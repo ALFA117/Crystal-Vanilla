@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../services/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { registrarLog } from '../../services/supabase';
+import { Glyph, withGlyph } from '../Glyph';
 
 export default function ChangePassword() {
   const { user } = useAuth();
@@ -39,7 +40,7 @@ export default function ChangePassword() {
 
   return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">🔑 Cambiar Contraseña</h3>
+      <h3 className="cv-dash-panel__title"><Glyph i="🔑" /> Cambiar Contraseña</h3>
 
       <form className="cv-chpass__form" onSubmit={handleSubmit} noValidate>
 
@@ -55,7 +56,7 @@ export default function ChangePassword() {
             />
             <button type="button" className="cv-chpass__eye"
               onClick={() => setShow((s) => ({ ...s, nueva: !s.nueva }))}>
-              {show.nueva ? '🙈' : '👁️'}
+              <Glyph i={show.nueva ? '🙈' : '👁️'} />
             </button>
           </div>
         </div>
@@ -72,7 +73,7 @@ export default function ChangePassword() {
             />
             <button type="button" className="cv-chpass__eye"
               onClick={() => setShow((s) => ({ ...s, confirmar: !s.confirmar }))}>
-              {show.confirmar ? '🙈' : '👁️'}
+              <Glyph i={show.confirmar ? '🙈' : '👁️'} />
             </button>
           </div>
         </div>
@@ -80,12 +81,12 @@ export default function ChangePassword() {
         <AnimatePresence>
           {msg && (
             <motion.p
-              className={`cv-chpass__msg ${isError ? 'cv-chpass__msg--error' : 'cv-chpass__msg--ok'}`}
+              className={`cv-chpass__msg ${withGlyph(isError ? 'cv-chpass__msg--error' : 'cv-chpass__msg--ok')}`}
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {isError ? '⚠️' : '✓'} {msg}
+              {withGlyph(isError ? '⚠️' : '✓')} {msg}
             </motion.p>
           )}
         </AnimatePresence>
@@ -97,7 +98,7 @@ export default function ChangePassword() {
           whileHover={!loading ? { scale: 1.03 } : {}}
           whileTap={!loading ? { scale: 0.97 } : {}}
         >
-          {loading ? '⏳ Guardando...' : '🔐 Actualizar contraseña'}
+          {withGlyph(loading ? 'Guardando...' : '🔐 Actualizar contraseña')}
         </motion.button>
       </form>
     </div>

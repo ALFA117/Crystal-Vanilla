@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useAnimatedCounter } from '../hooks/useAnimatedCounter';
+import { Glyph } from './Glyph';
 
 /** Formatea el decimal exacto: "12.1", "12" → "12 ✓ exacto" */
 function fmtExact(exact) {
@@ -24,7 +25,7 @@ export function SimpleCard({ icon, label, unit, value, index, accentColor }) {
       transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.06 }}
       whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
     >
-      <span className="cv-card__icon">{icon}</span>
+      <span className="cv-card__icon"><Glyph i={icon} /></span>
       <p   className="cv-card__label">{label}</p>
       <motion.span
         className="cv-card__number"
@@ -55,7 +56,7 @@ export function PkgCard({ icon, label, unit, desc, pkgData, index, accentColor }
       transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.06 }}
       whileHover={{ scale: 1.03, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
     >
-      <span className="cv-card__icon">{icon}</span>
+      <span className="cv-card__icon"><Glyph i={icon} /></span>
       <p    className="cv-card__label">{label}</p>
 
       <motion.span

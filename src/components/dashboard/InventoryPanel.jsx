@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { updateAlmacen, registrarLog } from '../../services/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { Glyph, withGlyph } from '../Glyph';
 
 const ITEMS = [
   { key: 'paquetes_botellas',  label: 'Paquetes de Botellas',       icon: '🧴', unit: 'paquetes', equiv: '1 paquete = 200 botellas' },
@@ -74,20 +75,20 @@ export default function InventoryPanel({ almacen, onRefresh }) {
   return (
     <div className="cv-dash-panel">
       <div className="cv-dash-panel__header">
-        <h3 className="cv-dash-panel__title">📦 Inventario del Almacén</h3>
+        <h3 className="cv-dash-panel__title"><Glyph i="📦" /> Inventario del Almacén</h3>
         <div className="cv-dash-panel__actions">
           {msg && <span className="cv-dash-panel__msg">{msg}</span>}
           {isAdmin && !editMode && (
             <motion.button className="cv-dash-btn cv-dash-btn--edit" onClick={startEdit}
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              ✏️ Editar
+              <Glyph i="✏" /> Editar
             </motion.button>
           )}
           {editMode && (
             <>
               <motion.button className="cv-dash-btn cv-dash-btn--save" onClick={handleSave} disabled={saving}
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                {saving ? '⏳...' : '💾 Guardar'}
+                {withGlyph(saving ? 'Guardando...' : '💾 Guardar')}
               </motion.button>
               <motion.button className="cv-dash-btn cv-dash-btn--cancel" onClick={cancelEdit}
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
@@ -105,8 +106,8 @@ export default function InventoryPanel({ almacen, onRefresh }) {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
             whileHover={{ scale: 1.03, boxShadow: '0 8px 24px rgba(212,160,23,0.25)' }}>
-            <span className="cv-dash-inv__icon">{item.icon}</span>
-            <p className="cv-dash-inv__label">{item.label}</p>
+            <span className="cv-dash-inv__icon"><Glyph i={item.icon} /></span>
+            <p className="cv-dash-inv__label">{withGlyph(item.label)}</p>
             {editMode ? (
               <input type="number" min="0" className="cv-dash-inv__input"
                 value={form[item.key] ?? 0}
@@ -122,7 +123,7 @@ export default function InventoryPanel({ almacen, onRefresh }) {
 
       {/* ── Sección Otros ── */}
       <div className="cv-dash-otros">
-        <h4 className="cv-dash-otros__title">📋 Otros artículos</h4>
+        <h4 className="cv-dash-otros__title"><Glyph i="📋" /> Otros artículos</h4>
 
         {/* Lista actual */}
         {(editMode ? otros : otrosActuales).length === 0 && (

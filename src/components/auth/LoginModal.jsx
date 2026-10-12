@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { Glyph, withGlyph } from '../Glyph';
 
 export default function LoginModal({ onClose }) {
   const { login } = useAuth();
@@ -47,7 +48,7 @@ export default function LoginModal({ onClose }) {
       >
         {/* Header dorado */}
         <div className="cv-modal__header">
-          <span className="cv-modal__logo">🌿</span>
+          <span className="cv-modal__logo"><Glyph i="🌿" /></span>
           <div>
             <h2 className="cv-modal__title">Crystal Vanilla</h2>
             <p className="cv-modal__subtitle">Acceso al sistema</p>
@@ -59,7 +60,7 @@ export default function LoginModal({ onClose }) {
           <div className="cv-modal__field">
             <label className="cv-modal__label">Usuario</label>
             <div className="cv-modal__input-wrap">
-              <span className="cv-modal__input-icon">👤</span>
+              <span className="cv-modal__input-icon"><Glyph i="👤" /></span>
               <input
                 type="text"
                 className="cv-modal__input"
@@ -75,7 +76,7 @@ export default function LoginModal({ onClose }) {
           <div className="cv-modal__field">
             <label className="cv-modal__label">Contraseña</label>
             <div className="cv-modal__input-wrap">
-              <span className="cv-modal__input-icon">🔑</span>
+              <span className="cv-modal__input-icon"><Glyph i="🔑" /></span>
               <input
                 type={showPass ? 'text' : 'password'}
                 className="cv-modal__input cv-modal__input--pass"
@@ -90,7 +91,7 @@ export default function LoginModal({ onClose }) {
                 onClick={() => setShowPass((v) => !v)}
                 aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
-                {showPass ? '🙈' : '👁️'}
+                <Glyph i={showPass ? '🙈' : '👁️'} />
               </button>
             </div>
           </div>
@@ -104,7 +105,7 @@ export default function LoginModal({ onClose }) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                ⚠️ {error}
+                <Glyph i="⚠" /> {error}
               </motion.p>
             )}
           </AnimatePresence>
@@ -119,7 +120,7 @@ export default function LoginModal({ onClose }) {
             {loading ? (
               <span className="cv-modal__spinner">⏳ Verificando...</span>
             ) : (
-              '✨ Ingresar al sistema'
+              withGlyph('✨ Ingresar al sistema')
             )}
           </motion.button>
 

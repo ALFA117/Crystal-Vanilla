@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, getAllUsuarios, toggleUsuarioActivo, updateRolUsuario, registrarLog } from '../../services/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { Glyph, withGlyph } from '../Glyph';
 
 const BLANK_FORM = { nombre: '', username: '', password: '', confirmar: '', rol: 'empleado' };
 
@@ -81,10 +82,10 @@ export default function UserManagement() {
   return (
     <div className="cv-dash-panel">
       <div className="cv-dash-panel__header">
-        <h3 className="cv-dash-panel__title">👥 Gestión de Usuarios</h3>
+        <h3 className="cv-dash-panel__title"><Glyph i="👥" /> Gestión de Usuarios</h3>
         <div className="cv-dash-panel__actions">
           {msg.text && (
-            <span className={`cv-dash-panel__msg ${msg.err ? 'cv-dash-panel__msg--err' : ''}`}>
+            <span className={`cv-dash-panel__msg ${withGlyph(msg.err ? 'cv-dash-panel__msg--err' : '')}`}>
               {msg.text}
             </span>
           )}
@@ -93,7 +94,7 @@ export default function UserManagement() {
             onClick={() => setShowForm((v) => !v)}
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
           >
-            {showForm ? '✕ Cancelar' : '➕ Nuevo usuario'}
+            {withGlyph(showForm ? '✕ Cancelar' : '➕ Nuevo usuario')}
           </motion.button>
         </div>
       </div>
@@ -128,7 +129,7 @@ export default function UserManagement() {
                     placeholder="Mínimo 6 caracteres"
                     value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} />
                   <button type="button" className="cv-chpass__eye" onClick={() => setShowPass((v) => !v)}>
-                    {showPass ? '🙈' : '👁️'}
+                    <Glyph i={showPass ? '🙈' : '👁️'} />
                   </button>
                 </div>
               </div>
@@ -148,7 +149,7 @@ export default function UserManagement() {
             </div>
             <motion.button type="submit" className="cv-dash-btn cv-dash-btn--save cv-dash-newuser__btn"
               disabled={creating} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              {creating ? '⏳ Creando...' : '✅ Crear usuario'}
+              {withGlyph(creating ? 'Creando...' : '✅ Crear usuario')}
             </motion.button>
           </motion.form>
         )}
@@ -177,16 +178,16 @@ export default function UserManagement() {
             {u.id !== currentUser?.id && (
               <div className="cv-dash-user__btns">
                 <motion.button
-                  className={`cv-dash-btn cv-dash-btn--sm ${u.activo ? 'cv-dash-btn--warn' : 'cv-dash-btn--save'}`}
+                  className={`cv-dash-btn cv-dash-btn--sm ${withGlyph(u.activo ? 'cv-dash-btn--warn' : 'cv-dash-btn--save')}`}
                   onClick={() => toggleActivo(u.id, u.activo)}
                   whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }}>
-                  {u.activo ? '🚫 Desactivar' : '✅ Activar'}
+                  {withGlyph(u.activo ? '🚫 Desactivar' : '✅ Activar')}
                 </motion.button>
                 <motion.button
                   className="cv-dash-btn cv-dash-btn--sm cv-dash-btn--edit"
                   onClick={() => cambiarRol(u.id, u.rol)}
                   whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }}>
-                  🔄 {u.rol === 'admin' ? '→ Empleado' : '→ Admin'}
+                  <Glyph i="🔄" /> {u.rol === 'admin' ? '→ Empleado' : '→ Admin'}
                 </motion.button>
               </div>
             )}

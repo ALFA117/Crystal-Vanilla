@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { Glyph } from './Glyph';
 
 export default function Header({ onLoginClick, onDashboardClick }) {
   const { user, perfil, loading } = useAuth();
@@ -17,7 +18,7 @@ export default function Header({ onLoginClick, onDashboardClick }) {
           animate={{ rotate: [0, 8, -8, 8, 0], scale: [1, 1.1, 1, 1.05, 1] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         >
-          🌿
+          <Glyph i="🌿" />
         </motion.span>
 
         <div className="cv-header__text">
@@ -30,7 +31,7 @@ export default function Header({ onLoginClick, onDashboardClick }) {
           animate={{ rotate: [0, -8, 8, -8, 0], scale: [1, 1.05, 1, 1.1, 1] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
         >
-          🌿
+          <Glyph i="🌿" />
         </motion.span>
 
         {/* Botón Ingresar / Panel de usuario */}
@@ -47,7 +48,7 @@ export default function Header({ onLoginClick, onDashboardClick }) {
                 whileHover={{ scale: 1.06, boxShadow: '0 4px 16px rgba(212,160,23,0.5)' }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="cv-header__user-icon">👤</span>
+                <span className="cv-header__user-icon"><Glyph i="👤" /></span>
                 <span className="cv-header__user-name">
                   {perfil?.nombre?.split(' ')[0] || 'Panel'}
                 </span>
@@ -66,7 +67,7 @@ export default function Header({ onLoginClick, onDashboardClick }) {
                 whileHover={{ scale: 1.06, boxShadow: '0 4px 16px rgba(212,160,23,0.5)' }}
                 whileTap={{ scale: 0.95 }}
               >
-                🔐 Ingresar
+                <Glyph i="🔐" /> Ingresar
               </motion.button>
             )}
           </AnimatePresence>

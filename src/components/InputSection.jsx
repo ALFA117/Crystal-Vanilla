@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MODES } from './ModeSelector';
+import { Glyph, withGlyph } from './Glyph';
 
 export default function InputSection({ mode, onCalculate }) {
   const [value, setValue] = useState('');
@@ -57,7 +58,7 @@ export default function InputSection({ mode, onCalculate }) {
 
           <form onSubmit={handleSubmit} className="cv-input-form" noValidate>
             <div className="cv-input-form__field">
-              <span className="cv-input-form__prefix">{currentMode?.emoji}</span>
+              <span className="cv-input-form__prefix"><Glyph i={currentMode?.emoji} /></span>
               <input
                 type="number"
                 inputMode="numeric"
@@ -82,14 +83,14 @@ export default function InputSection({ mode, onCalculate }) {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2 }}
                 >
-                  ⚠️ {error}
+                  <Glyph i="⚠" /> {error}
                 </motion.p>
               )}
             </AnimatePresence>
 
             <motion.button
               type="submit"
-              className={`cv-btn-calculate ${ripple ? 'cv-btn-calculate--ripple' : ''}`}
+              className={`cv-btn-calculate ${withGlyph(ripple ? 'cv-btn-calculate--ripple' : '')}`}
               whileHover={{ scale: 1.04, boxShadow: '0 8px 30px rgba(212,160,23,0.55)' }}
               whileTap={{ scale: 0.97 }}
             >
@@ -97,7 +98,7 @@ export default function InputSection({ mode, onCalculate }) {
                 animate={ripple ? { rotate: [0, 15, -15, 0] } : {}}
                 transition={{ duration: 0.4 }}
               >
-                ✨
+                <Glyph i="✨" />
               </motion.span>
               &nbsp; Calcular Producción
             </motion.button>

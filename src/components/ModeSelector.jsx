@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Glyph, withGlyph } from './Glyph';
 
 const MODES = [
   {
@@ -43,8 +44,8 @@ export default function ModeSelector({ activeMode, onModeChange }) {
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
           >
-            <span className="cv-tab__emoji">{mode.emoji}</span>
-            <span className="cv-tab__label">{mode.label}</span>
+            <span className="cv-tab__emoji"><Glyph i={mode.emoji} /></span>
+            <span className="cv-tab__label">{withGlyph(mode.label)}</span>
             {activeMode === mode.id && (
               <motion.div
                 className="cv-tab__indicator"

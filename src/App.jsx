@@ -14,6 +14,7 @@ import { AuthProvider }    from './contexts/AuthContext';
 
 import { calculate }       from './utils/calculations';
 import './App.css';
+import { Glyph } from './components/Glyph';
 
 function AppContent() {
   const { user, perfil } = useAuth();
@@ -60,7 +61,7 @@ function AppContent() {
             onClick={() => goTo('calculator')}
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
           >
-            📊 Calculadora
+            <Glyph i="📊" /> Calculadora
           </motion.button>
 
           <motion.button
@@ -68,7 +69,7 @@ function AppContent() {
             onClick={handleInventario}
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
           >
-            📦 {user ? (perfil?.rol === 'admin' ? 'Panel Admin' : 'Inventario') : 'Inventario'}
+            <Glyph i="📦" /> {user ? (perfil?.rol === 'admin' ? 'Panel Admin' : 'Inventario') : 'Inventario'}
           </motion.button>
         </nav>
 

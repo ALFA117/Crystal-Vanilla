@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Glyph } from '../Glyph';
 
 const ACCION_ICONS = {
   login:                   '🔓',
@@ -14,14 +15,14 @@ export default function LogsPanel({ logs, loading }) {
   if (loading) return <div className="cv-dash__loading">Cargando actividad...</div>;
   if (!logs?.length) return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">📋 Actividad Reciente</h3>
+      <h3 className="cv-dash-panel__title"><Glyph i="📋" /> Actividad Reciente</h3>
       <p className="cv-dash__empty">Sin actividad registrada aún.</p>
     </div>
   );
 
   return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">📋 Actividad Reciente</h3>
+      <h3 className="cv-dash-panel__title"><Glyph i="📋" /> Actividad Reciente</h3>
       <div className="cv-dash-logs">
         {logs.map((log, i) => (
           <motion.div
@@ -32,7 +33,7 @@ export default function LogsPanel({ logs, loading }) {
             transition={{ delay: i * 0.04 }}
           >
             <span className="cv-dash-log__icon">
-              {ACCION_ICONS[log.accion] || '📝'}
+              <Glyph i={ACCION_ICONS[log.accion] || '📝'} />
             </span>
             <div className="cv-dash-log__info">
               <span className="cv-dash-log__accion">{log.accion.replace(/_/g, ' ')}</span>

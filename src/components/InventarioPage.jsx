@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Glyph, withGlyph } from './Glyph';
 
 const FIELDS = [
   { id: 'bolsas_botellas', label: 'Bolsas de Botellas', placeholder: '0', icon: '🛍️' },
@@ -44,7 +45,7 @@ export default function InventarioPage({ onBack }) {
           transition={{ delay: 0.15 }}
         >
           <div className="cv-inv-panel__header">
-            <span className="cv-inv-panel__icon">🔐</span>
+            <span className="cv-inv-panel__icon"><Glyph i="🔐" /></span>
             <div>
               <h3 className="cv-inv-panel__title">Acceso al Inventario</h3>
               <p className="cv-inv-panel__subtitle">Autenticación con Supabase Auth</p>
@@ -96,7 +97,7 @@ export default function InventarioPage({ onBack }) {
           transition={{ delay: 0.25 }}
         >
           <div className="cv-inv-panel__header">
-            <span className="cv-inv-panel__icon">📋</span>
+            <span className="cv-inv-panel__icon"><Glyph i="📋" /></span>
             <div>
               <h3 className="cv-inv-panel__title">Control de Inventario</h3>
               <p className="cv-inv-panel__subtitle">Existencias actuales en tiempo real</p>
@@ -107,7 +108,7 @@ export default function InventarioPage({ onBack }) {
             {FIELDS.map((field) => (
               <div key={field.id} className="cv-inv-field">
                 <label className="cv-inv-field__label">
-                  {field.icon} {field.label}
+                  <Glyph i={field.icon} /> {withGlyph(field.label)}
                 </label>
                 <input
                   className="cv-inv-field__input"

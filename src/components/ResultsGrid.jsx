@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SimpleCard, PkgCard } from './ResultCard';
 import { SECTIONS } from '../utils/calculations';
 import { exportToPDF } from '../utils/pdfExport';
+import { Glyph, withGlyph } from './Glyph';
 
 const SECTION_COLORS = {
   tiendas:  '#D4A017',
@@ -51,7 +52,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              📄 Descargar PDF
+              <Glyph i="📄" /> Descargar PDF
             </motion.button>
           </div>
         </motion.div>
@@ -70,7 +71,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
             >
               {/* Section title */}
               <div className="cv-section__header" style={{ '--sec-color': accentColor }}>
-                <h3 className="cv-section__title">{section.title}</h3>
+                <h3 className="cv-section__title">{withGlyph(section.title)}</h3>
                 <div  className="cv-section__line" />
               </div>
 
@@ -94,7 +95,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                           transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
                           whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                         >
-                          <span className="cv-card__icon">{item.icon}</span>
+                          <span className="cv-card__icon"><Glyph i={item.icon} /></span>
                           <p className="cv-card__label">Cajas Totales</p>
                           <motion.span className="cv-card__number" key={results.cajasTotal}
                             initial={{ scale: 1.25, color: '#E8A020' }} animate={{ scale: 1, color: '#3B2A1A' }}
@@ -124,7 +125,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                           transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
                           whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                         >
-                          <span className="cv-card__icon">{item.icon}</span>
+                          <span className="cv-card__icon"><Glyph i={item.icon} /></span>
                           <p className="cv-card__label">Botellas Totales</p>
                           <motion.span className="cv-card__number" key={results.botellasTotal}
                             initial={{ scale: 1.25, color: '#E8A020' }} animate={{ scale: 1, color: '#3B2A1A' }}
@@ -154,8 +155,8 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                           transition={{ type: 'spring', stiffness: 300, damping: 24, delay: idx * 0.06 }}
                           whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                         >
-                          <span className="cv-card__icon">{item.icon}</span>
-                          <p className="cv-card__label">{item.label}</p>
+                          <span className="cv-card__icon"><Glyph i={item.icon} /></span>
+                          <p className="cv-card__label">{withGlyph(item.label)}</p>
                           <motion.span
                             className="cv-card__number"
                             key={inputValue}
@@ -215,7 +216,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                         transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.15 }}
                         whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                       >
-                        <span className="cv-card__icon">🏪</span>
+                        <span className="cv-card__icon"><Glyph i="🏪" /></span>
                         <p className="cv-card__label">Tiendas Completas</p>
                         <span className="cv-card__number">{results.tiendas.toLocaleString('es-MX')}</span>
                         <span className="cv-card__unit">tiendas</span>
@@ -231,7 +232,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
                         transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.15 }}
                         whileHover={{ scale: 1.04, y: -3, boxShadow: '0 10px 28px rgba(212,160,23,0.3)' }}
                       >
-                        <span className="cv-card__icon">🏪</span>
+                        <span className="cv-card__icon"><Glyph i="🏪" /></span>
                         <p className="cv-card__label">Tiendas Completas</p>
                         <span className="cv-card__number">{results.tiendasCompletas.toLocaleString('es-MX')}</span>
                         <span className="cv-card__unit">tiendas</span>
@@ -326,7 +327,7 @@ export default function ResultsGrid({ results, mode, inputValue, onInventario })
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0, duration: 0.5 }}
         >
-          <h3 className="cv-reference__title">📐 Tabla de Equivalencias</h3>
+          <h3 className="cv-reference__title"><Glyph i="📐" /> Tabla de Equivalencias</h3>
           <div className="cv-reference__grid">
             {[
               ['1 tienda',              '11 cajas · 110 litros · 220 botellas'],

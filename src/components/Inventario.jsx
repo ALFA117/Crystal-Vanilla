@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Glyph, withGlyph } from './Glyph';
 
 const FIELDS = [
   { id: 'bolsas_botellas', label: 'Bolsas de Botellas',  placeholder: '0', icon: '🛍️' },
@@ -16,7 +17,7 @@ export default function Inventario() {
     >
       {/* Header */}
       <div className="cv-inventario__header">
-        <h2 className="cv-inventario__title">📋 Inventario</h2>
+        <h2 className="cv-inventario__title"><Glyph i="📋" /> Inventario</h2>
         <p className="cv-inventario__subtitle">Existencias actuales</p>
       </div>
 
@@ -25,7 +26,7 @@ export default function Inventario() {
         {FIELDS.map((field) => (
           <div key={field.id} className="cv-inventario__field">
             <label className="cv-inventario__label">
-              {field.icon} {field.label}
+              <Glyph i={field.icon} /> {withGlyph(field.label)}
             </label>
             <input
               className="cv-inventario__input"

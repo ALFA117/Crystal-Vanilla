@@ -1,0 +1,12 @@
+{
+  "name": "Crystal Vanilla — Calculadora de Producción",
+  "short_name": "Crystal Vanilla",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFF0",
+  "theme_color": "#3B2A1A",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

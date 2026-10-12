@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Glyph } from './Glyph';
 
 export default function Footer() {
   return (
@@ -16,7 +17,7 @@ export default function Footer() {
       <p className="cv-footer__text">
         Crystal Vanilla <span className="cv-footer__copy">©</span> 2025 — Producción y Logística
       </p>
-      <p className="cv-footer__sub">🌿 Todos los cálculos usan redondeo hacia arriba (Math.ceil)</p>
+      <p className="cv-footer__sub"><Glyph i="🌿" /> Todos los cálculos usan redondeo hacia arriba (Math.ceil)</p>
     </motion.footer>
   );
 }
