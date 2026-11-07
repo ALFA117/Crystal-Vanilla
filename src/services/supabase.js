@@ -19,15 +19,28 @@ export { supabase };
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
+// Si el servidor no contesta, decirlo tal cual en vez de "usuario no encontrado"
+export const SIN_SERVIDOR =
+  'No se pudo conectar con el servidor de inventario. La calculadora sigue funcionando sin iniciar sesión.';
+
+function esErrorDeRed(err) {
+  return !!err && (
+    err.name === 'AuthRetryableFetchError' ||
+    /failed to fetch|networkerror|load failed|fetch failed|timeout|aborted/i.test(err.message || '')
+  );
+}
+
 export async function loginWithEmailOrUsername(identifier, password) {
+  if (!supabase) throw new Error(SIN_SERVIDOR);
   let email = identifier;
   if (!identifier.includes('@')) {
     const { data, error } = await supabase.rpc('get_email_by_username', { p_username: identifier });
+    if (esErrorDeRed(error)) throw new Error(SIN_SERVIDOR);
     if (error || !data) throw new Error('Usuario no encontrado');
     email = data;
   }
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
+  if (error) throw (esErrorDeRed(error) ? new Error(SIN_SERVIDOR) : error);
   return data;
 }
 
