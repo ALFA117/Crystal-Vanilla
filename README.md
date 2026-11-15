@@ -24,3 +24,11 @@ See [`MANUAL_USUARIO.md`](./MANUAL_USUARIO.md) (end-user guide) and [`MANUAL_TEC
 npm install
 npm run dev
 ```
+
+## DESIGN_NOTES (rediseño pro, nov 2026)
+
+- **Dirección:** herramienta de trabajo formal con la marca del cliente (chocolate + oro de vainilla del logo). Retícula bento en el resultado, bordes definidos de 1.5 px y sombras duras discretas; sin partículas ni fondos animados.
+- **Tipografía:** Marcellus (display, eco de las capitales del logo) · Public Sans (texto) · IBM Plex Mono (cantidades).
+- **Colores con significado fijo:** oro `#D8A73E` = acción principal · verde `#2E6A45` = exacto/correcto · terracota `#9C3D1C` = falta material o error · chocolate `#45261F` = marca. Contraste AA verificado.
+- **Recorrido:** antes: elegir modo → escribir → Calcular → bajar a ver 5 secciones de tarjetas. Ahora: elegir modo → escribir → Calcular (o Enter); en escritorio el resultado aparece al lado sin desplazarse y los materiales quedan en una sola tabla (en móvil baja solo al resultado).
+- La lógica de cálculo (`src/utils/calculations.js`) y el PDF (`src/utils/pdfExport.js`) no cambiaron; jsPDF ahora se carga al pulsar «Descargar PDF».
