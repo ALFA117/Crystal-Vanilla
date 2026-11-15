@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Icon, { BrandMark } from '../Icon';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginModal({ onClose }) {
@@ -9,6 +10,12 @@ export default function LoginModal({ onClose }) {
   const [error,      setError]      = useState('');
   const [loading,    setLoading]    = useState(false);
   const [showPass,   setShowPass]   = useState(false);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,30 +47,33 @@ export default function LoginModal({ onClose }) {
     >
       <motion.div
         className="cv-modal"
-        initial={{ opacity: 0, scale: 0.88, y: 30 }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cv-login-title"
+        initial={{ opacity: 0, scale: 0.97, y: 8 }}
         animate={{ opacity: 1, scale: 1,    y: 0  }}
-        exit={{ opacity: 0, scale: 0.88, y: 20 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+        exit={{ opacity: 0, scale: 0.98, y: 4 }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
       >
-        {/* Header dorado */}
         <div className="cv-modal__header">
-          <span className="cv-modal__logo">🌿</span>
+          <span className="cv-modal__logo"><BrandMark size={40} /></span>
           <div>
-            <h2 className="cv-modal__title">Crystal Vanilla</h2>
-            <p className="cv-modal__subtitle">Acceso al sistema</p>
+            <h2 id="cv-login-title" className="cv-modal__title">Acceso al inventario</h2>
+            <p className="cv-modal__subtitle">Solo personal de Crystal Vanilla. La calculadora no necesita cuenta.</p>
           </div>
-          <button className="cv-modal__close" onClick={onClose} aria-label="Cerrar">✕</button>
+          <button type="button" className="cv-icon-btn cv-modal__close" onClick={onClose} aria-label="Cerrar"><Icon name="x" size={20} /></button>
         </div>
 
         <form className="cv-modal__form" onSubmit={handleSubmit} noValidate>
           <div className="cv-modal__field">
-            <label className="cv-modal__label">Usuario</label>
+            <label className="cv-modal__label" htmlFor="cv-login-user">Usuario</label>
             <div className="cv-modal__input-wrap">
-              <span className="cv-modal__input-icon">👤</span>
+              <span className="cv-modal__input-icon"><Icon name="user" size={18} /></span>
               <input
+                id="cv-login-user"
                 type="text"
                 className="cv-modal__input"
-                placeholder="Ej. AldoGaya2026"
+                placeholder="Tu usuario o correo"
                 value={identifier}
                 onChange={(e) => { setIdentifier(e.target.value); setError(''); }}
                 autoComplete="username"
@@ -73,10 +83,11 @@ export default function LoginModal({ onClose }) {
           </div>
 
           <div className="cv-modal__field">
-            <label className="cv-modal__label">Contraseña</label>
+            <label className="cv-modal__label" htmlFor="cv-login-pass">Contraseña</label>
             <div className="cv-modal__input-wrap">
-              <span className="cv-modal__input-icon">🔑</span>
+              <span className="cv-modal__input-icon"><Icon name="key" size={18} /></span>
               <input
+                id="cv-login-pass"
                 type={showPass ? 'text' : 'password'}
                 className="cv-modal__input cv-modal__input--pass"
                 placeholder="••••••••"
@@ -90,7 +101,7 @@ export default function LoginModal({ onClose }) {
                 onClick={() => setShowPass((v) => !v)}
                 aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
-                {showPass ? '🙈' : '👁️'}
+                <Icon name={showPass ? 'eyeOff' : 'eye'} size={18} />
               </button>
             </div>
           </div>
@@ -98,13 +109,14 @@ export default function LoginModal({ onClose }) {
           <AnimatePresence>
             {error && (
               <motion.p
+                role="alert"
                 className="cv-modal__error"
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                ⚠️ {error}
+                <Icon name="alert" size={16} /> {error}
               </motion.p>
             )}
           </AnimatePresence>
@@ -113,13 +125,11 @@ export default function LoginModal({ onClose }) {
             type="submit"
             className="cv-modal__btn"
             disabled={loading}
-            whileHover={!loading ? { scale: 1.03, boxShadow: '0 8px 28px rgba(212,160,23,0.5)' } : {}}
-            whileTap={!loading ? { scale: 0.97 } : {}}
           >
             {loading ? (
-              <span className="cv-modal__spinner">⏳ Verificando...</span>
+              <span className="cv-modal__spinner"><Icon name="loader" size={18} /> Verificando…</span>
             ) : (
-              '✨ Ingresar al sistema'
+              <><Icon name="login" size={18} /> Ingresar al sistema</>
             )}
           </motion.button>
 

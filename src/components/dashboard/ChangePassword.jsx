@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../services/supabase';
+import Icon from '../Icon';
 import { useAuth } from '../../contexts/AuthContext';
 import { registrarLog } from '../../services/supabase';
 
@@ -28,7 +29,7 @@ export default function ChangePassword() {
       const { error } = await supabase.auth.updateUser({ password: form.nueva });
       if (error) throw error;
       await registrarLog(user.id, 'cambio_password', 'Contraseña actualizada correctamente');
-      flash('Contraseña actualizada correctamente ✓');
+      flash('Contraseña actualizada correctamente');
       setForm({ nueva: '', confirmar: '' });
     } catch (err) {
       flash(err.message || 'Error al cambiar la contraseña', true);
@@ -39,7 +40,7 @@ export default function ChangePassword() {
 
   return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">🔑 Cambiar Contraseña</h3>
+      <h3 className="cv-dash-panel__title"><Icon name="key" size={18} /> Cambiar contraseña</h3>
 
       <form className="cv-chpass__form" onSubmit={handleSubmit} noValidate>
 
@@ -55,7 +56,7 @@ export default function ChangePassword() {
             />
             <button type="button" className="cv-chpass__eye"
               onClick={() => setShow((s) => ({ ...s, nueva: !s.nueva }))}>
-              {show.nueva ? '🙈' : '👁️'}
+              <Icon name={show.nueva ? 'eyeOff' : 'eye'} size={18} />
             </button>
           </div>
         </div>
@@ -72,7 +73,7 @@ export default function ChangePassword() {
             />
             <button type="button" className="cv-chpass__eye"
               onClick={() => setShow((s) => ({ ...s, confirmar: !s.confirmar }))}>
-              {show.confirmar ? '🙈' : '👁️'}
+              <Icon name={show.confirmar ? 'eyeOff' : 'eye'} size={18} />
             </button>
           </div>
         </div>
@@ -85,7 +86,7 @@ export default function ChangePassword() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              {isError ? '⚠️' : '✓'} {msg}
+              <Icon name={isError ? 'alert' : 'checkCircle'} size={16} /> {msg}
             </motion.p>
           )}
         </AnimatePresence>
@@ -94,10 +95,8 @@ export default function ChangePassword() {
           type="submit"
           className="cv-dash-btn cv-dash-btn--save cv-chpass__btn"
           disabled={loading}
-          whileHover={!loading ? { scale: 1.03 } : {}}
-          whileTap={!loading ? { scale: 0.97 } : {}}
         >
-          {loading ? '⏳ Guardando...' : '🔐 Actualizar contraseña'}
+          {loading ? <><Icon name="loader" size={16} /> Guardando…</> : <><Icon name="lock" size={16} /> Actualizar contraseña</>}
         </motion.button>
       </form>
     </div>

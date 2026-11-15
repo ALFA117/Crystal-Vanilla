@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { updateAlmacen, registrarLog } from '../../services/supabase';
+import Icon from '../Icon';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ITEMS = [
-  { key: 'paquetes_botellas',  label: 'Paquetes de Botellas',       icon: '🧴', unit: 'paquetes', equiv: '1 paquete = 200 botellas' },
-  { key: 'paquetes_charolas',  label: 'Paquetes de Charolas',       icon: '📦', unit: 'paquetes', equiv: '1 paquete = 20 charolas'  },
-  { key: 'paquetes_tapas',     label: 'Cajas de Tapas',             icon: '🔵', unit: 'cajas',    equiv: '1 caja de tapas'           },
-  { key: 'paquetes_etiquetas', label: 'Cajas de Rollos Etiquetas',  icon: '🏷️', unit: 'cajas',    equiv: '1 caja de rollos'          },
+  { key: 'paquetes_botellas',  label: 'Paquetes de Botellas',       icon: 'bottle', unit: 'paquetes', equiv: '1 paquete = 200 botellas' },
+  { key: 'paquetes_charolas',  label: 'Paquetes de Charolas',       icon: 'layers', unit: 'paquetes', equiv: '1 paquete = 20 charolas'  },
+  { key: 'paquetes_tapas',     label: 'Cajas de Tapas',             icon: 'box', unit: 'cajas',    equiv: '1 caja de tapas'           },
+  { key: 'paquetes_etiquetas', label: 'Cajas de Rollos Etiquetas',  icon: 'tag', unit: 'cajas',    equiv: '1 caja de rollos'          },
 ];
 
 function parseOtros(raw) {
@@ -24,7 +25,7 @@ export default function InventoryPanel({ almacen, onRefresh }) {
   const [saving,   setSaving]   = useState(false);
   const [msg,      setMsg]      = useState('');
 
-  if (!almacen) return <div className="cv-dash__loading">Cargando inventario...</div>;
+  if (!almacen) return <div className="cv-dash__loading" role="status"><Icon name="loader" size={18} /> Cargando inventario…</div>;
 
   const startEdit = () => {
     setForm({
@@ -59,7 +60,7 @@ export default function InventoryPanel({ almacen, onRefresh }) {
     try {
       await updateAlmacen(almacen.id, { ...form, otros: JSON.stringify(otros) });
       await registrarLog(user.id, 'modificacion_inventario', 'Inventario actualizado');
-      setMsg('Guardado ✓');
+      setMsg('Guardado');
       setEditMode(false);
       onRefresh();
     } catch (err) {
@@ -74,24 +75,22 @@ export default function InventoryPanel({ almacen, onRefresh }) {
   return (
     <div className="cv-dash-panel">
       <div className="cv-dash-panel__header">
-        <h3 className="cv-dash-panel__title">📦 Inventario del Almacén</h3>
+        <h3 className="cv-dash-panel__title"><Icon name="box" size={18} /> Inventario del almacén</h3>
         <div className="cv-dash-panel__actions">
           {msg && <span className="cv-dash-panel__msg">{msg}</span>}
           {isAdmin && !editMode && (
-            <motion.button className="cv-dash-btn cv-dash-btn--edit" onClick={startEdit}
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              ✏️ Editar
+            <motion.button className="cv-dash-btn cv-dash-btn--edit" onClick={startEdit}>
+              <Icon name="pencil" size={16} /> Editar
             </motion.button>
           )}
           {editMode && (
             <>
-              <motion.button className="cv-dash-btn cv-dash-btn--save" onClick={handleSave} disabled={saving}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                {saving ? '⏳...' : '💾 Guardar'}
+              <motion.button className="cv-dash-btn cv-dash-btn--save" onClick={handleSave} disabled={saving}>
+                {saving ? <><Icon name="loader" size={16} /> Guardando…</> : <><Icon name="save" size={16} /> Guardar</>}
               </motion.button>
               <motion.button className="cv-dash-btn cv-dash-btn--cancel" onClick={cancelEdit}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                ✕
+                aria-label="Cancelar edición">
+                <Icon name="x" size={16} />
               </motion.button>
             </>
           )}
@@ -104,8 +103,8 @@ export default function InventoryPanel({ almacen, onRefresh }) {
           <motion.div key={item.key} className="cv-dash-inv__card"
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            whileHover={{ scale: 1.03, boxShadow: '0 8px 24px rgba(212,160,23,0.25)' }}>
-            <span className="cv-dash-inv__icon">{item.icon}</span>
+            >
+            <span className="cv-dash-inv__icon"><Icon name={item.icon} size={18} /></span>
             <p className="cv-dash-inv__label">{item.label}</p>
             {editMode ? (
               <input type="number" min="0" className="cv-dash-inv__input"
@@ -122,11 +121,11 @@ export default function InventoryPanel({ almacen, onRefresh }) {
 
       {/* ── Sección Otros ── */}
       <div className="cv-dash-otros">
-        <h4 className="cv-dash-otros__title">📋 Otros artículos</h4>
+        <h4 className="cv-dash-otros__title"><Icon name="list" size={16} /> Otros artículos</h4>
 
         {/* Lista actual */}
         {(editMode ? otros : otrosActuales).length === 0 && (
-          <p className="cv-dash__empty" style={{ fontSize: '0.82rem', padding: '0.6rem 0' }}>
+          <p className="cv-dash__empty">
             Sin artículos extra registrados.
           </p>
         )}
@@ -146,7 +145,7 @@ export default function InventoryPanel({ almacen, onRefresh }) {
               )}
               <span className="cv-dash-otros__unidad">{o.unidad}</span>
               {editMode && (
-                <button className="cv-dash-otros__del" onClick={() => removeOtro(o.id)}>✕</button>
+                <button type="button" className="cv-dash-otros__del" onClick={() => removeOtro(o.id)} aria-label={`Quitar ${o.nombre}`}><Icon name="trash" size={16} /></button>
               )}
             </motion.div>
           ))}
@@ -164,9 +163,8 @@ export default function InventoryPanel({ almacen, onRefresh }) {
             <input className="cv-dash-otros__add-input" placeholder="Unidad (piezas, botes…)"
               value={nuevoItem.unidad}
               onChange={(e) => setNuevoItem((n) => ({ ...n, unidad: e.target.value }))} />
-            <motion.button className="cv-dash-btn cv-dash-btn--save cv-dash-btn--sm" onClick={addOtro}
-              whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }}>
-              + Agregar
+            <motion.button className="cv-dash-btn cv-dash-btn--save cv-dash-btn--sm" onClick={addOtro}>
+              <Icon name="plus" size={16} /> Agregar
             </motion.button>
           </div>
         )}

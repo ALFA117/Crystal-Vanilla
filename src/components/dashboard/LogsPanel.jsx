@@ -1,27 +1,28 @@
 import { motion } from 'framer-motion';
+import Icon from '../Icon';
 
 const ACCION_ICONS = {
-  login:                   '🔓',
-  logout:                  '🔒',
-  modificacion_inventario: '📦',
-  cambio_password:         '🔑',
-  crear_usuario:           '👤',
-  eliminar_usuario:        '🗑️',
-  modificar_usuario:       '✏️',
+  login:                   'unlock',
+  logout:                  'lock',
+  modificacion_inventario: 'box',
+  cambio_password:         'key',
+  crear_usuario:           'user',
+  eliminar_usuario:        'trash',
+  modificar_usuario:       'pencil',
 };
 
 export default function LogsPanel({ logs, loading }) {
-  if (loading) return <div className="cv-dash__loading">Cargando actividad...</div>;
+  if (loading) return <div className="cv-dash__loading" role="status"><Icon name="loader" size={18} /> Cargando actividad…</div>;
   if (!logs?.length) return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">📋 Actividad Reciente</h3>
+      <h3 className="cv-dash-panel__title"><Icon name="list" size={18} /> Actividad reciente</h3>
       <p className="cv-dash__empty">Sin actividad registrada aún.</p>
     </div>
   );
 
   return (
     <div className="cv-dash-panel">
-      <h3 className="cv-dash-panel__title">📋 Actividad Reciente</h3>
+      <h3 className="cv-dash-panel__title"><Icon name="list" size={18} /> Actividad reciente</h3>
       <div className="cv-dash-logs">
         {logs.map((log, i) => (
           <motion.div
@@ -32,7 +33,7 @@ export default function LogsPanel({ logs, loading }) {
             transition={{ delay: i * 0.04 }}
           >
             <span className="cv-dash-log__icon">
-              {ACCION_ICONS[log.accion] || '📝'}
+              <Icon name={ACCION_ICONS[log.accion] || 'info'} size={16} />
             </span>
             <div className="cv-dash-log__info">
               <span className="cv-dash-log__accion">{log.accion.replace(/_/g, ' ')}</span>

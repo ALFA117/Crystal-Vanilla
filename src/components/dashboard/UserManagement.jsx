@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, getAllUsuarios, toggleUsuarioActivo, updateRolUsuario, registrarLog } from '../../services/supabase';
+import Icon from '../Icon';
 import { useAuth } from '../../contexts/AuthContext';
 
 const BLANK_FORM = { nombre: '', username: '', password: '', confirmar: '', rol: 'empleado' };
@@ -65,7 +66,7 @@ export default function UserManagement() {
       });
       if (error) throw error;
       await registrarLog(currentUser.id, 'crear_usuario', `Nuevo usuario: ${form.username} (${form.rol})`);
-      flash(`Usuario ${form.username} creado correctamente ✓`);
+      flash(`Usuario ${form.username} creado correctamente`);
       setForm(BLANK_FORM);
       setShowForm(false);
       fetchUsuarios();
@@ -76,12 +77,12 @@ export default function UserManagement() {
     }
   };
 
-  if (loading) return <div className="cv-dash__loading">Cargando usuarios...</div>;
+  if (loading) return <div className="cv-dash__loading" role="status"><Icon name="loader" size={18} /> Cargando usuarios…</div>;
 
   return (
     <div className="cv-dash-panel">
       <div className="cv-dash-panel__header">
-        <h3 className="cv-dash-panel__title">👥 Gestión de Usuarios</h3>
+        <h3 className="cv-dash-panel__title"><Icon name="users" size={18} /> Gestión de usuarios</h3>
         <div className="cv-dash-panel__actions">
           {msg.text && (
             <span className={`cv-dash-panel__msg ${msg.err ? 'cv-dash-panel__msg--err' : ''}`}>
@@ -91,9 +92,8 @@ export default function UserManagement() {
           <motion.button
             className="cv-dash-btn cv-dash-btn--save"
             onClick={() => setShowForm((v) => !v)}
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
           >
-            {showForm ? '✕ Cancelar' : '➕ Nuevo usuario'}
+            {showForm ? <><Icon name="x" size={16} /> Cancelar</> : <><Icon name="plus" size={16} /> Nuevo usuario</>}
           </motion.button>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function UserManagement() {
                     placeholder="Mínimo 6 caracteres"
                     value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} />
                   <button type="button" className="cv-chpass__eye" onClick={() => setShowPass((v) => !v)}>
-                    {showPass ? '🙈' : '👁️'}
+                    <Icon name={showPass ? 'eyeOff' : 'eye'} size={18} />
                   </button>
                 </div>
               </div>
@@ -147,8 +147,8 @@ export default function UserManagement() {
               </div>
             </div>
             <motion.button type="submit" className="cv-dash-btn cv-dash-btn--save cv-dash-newuser__btn"
-              disabled={creating} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              {creating ? '⏳ Creando...' : '✅ Crear usuario'}
+              disabled={creating}>
+              {creating ? <><Icon name="loader" size={16} /> Creando…</> : <><Icon name="check" size={16} /> Crear usuario</>}
             </motion.button>
           </motion.form>
         )}
@@ -178,15 +178,13 @@ export default function UserManagement() {
               <div className="cv-dash-user__btns">
                 <motion.button
                   className={`cv-dash-btn cv-dash-btn--sm ${u.activo ? 'cv-dash-btn--warn' : 'cv-dash-btn--save'}`}
-                  onClick={() => toggleActivo(u.id, u.activo)}
-                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }}>
-                  {u.activo ? '🚫 Desactivar' : '✅ Activar'}
+                  onClick={() => toggleActivo(u.id, u.activo)}>
+                  {u.activo ? <><Icon name="ban" size={15} /> Desactivar</> : <><Icon name="check" size={15} /> Activar</>}
                 </motion.button>
                 <motion.button
                   className="cv-dash-btn cv-dash-btn--sm cv-dash-btn--edit"
-                  onClick={() => cambiarRol(u.id, u.rol)}
-                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }}>
-                  🔄 {u.rol === 'admin' ? '→ Empleado' : '→ Admin'}
+                  onClick={() => cambiarRol(u.id, u.rol)}>
+                  <Icon name="refresh" size={15} /> {u.rol === 'admin' ? 'Hacer empleado' : 'Hacer admin'}
                 </motion.button>
               </div>
             )}
