@@ -4,7 +4,7 @@ import Icon, { BrandMark } from '../Icon';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginModal({ onClose }) {
-  const { login } = useAuth();
+  const { login, servidor } = useAuth();
   const [identifier, setIdentifier] = useState('');
   const [password,   setPassword]   = useState('');
   const [error,      setError]      = useState('');
@@ -65,6 +65,12 @@ export default function LoginModal({ onClose }) {
         </div>
 
         <form className="cv-modal__form" onSubmit={handleSubmit} noValidate>
+          {servidor === 'offline' && (
+            <p className="cv-modal__notice" role="status">
+              <Icon name="info" size={16} />
+              <span>El servidor de inventario no responde en este momento, así que no podrás entrar. La calculadora funciona sin cuenta.</span>
+            </p>
+          )}
           <div className="cv-modal__field">
             <label className="cv-modal__label" htmlFor="cv-login-user">Usuario</label>
             <div className="cv-modal__input-wrap">

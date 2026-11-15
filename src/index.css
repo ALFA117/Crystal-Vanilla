@@ -1,10 +1,11 @@
 /* Crystal Vanilla — tokens del sistema de diseño
    Paleta tomada del logo del cliente: chocolate + oro de vainilla.
    Significado fijo de colores:
-     --gold   = acción principal
+     --brand  = acción principal (botones) y marca
+     --gold   = acento de marca (filetes, íconos)
      --ok     = exacto / correcto
      --warn   = falta material / error
-     --brand  = marca (barra superior, bloque de extracto)               */
+     Sombras casi planas: separación de planos, sin desplazamientos duros. */
 
 :root {
   /* Superficies */
@@ -17,7 +18,9 @@
   --ink:        #2A1C16;
   --ink-2:      #5A4639;
   --ink-3:      #6E5A4C;
-  --line:       #2A1C16;
+  --line:       #CDBEA8;
+  --line-strong:#2A1C16;
+  --line-input: #8F7B66;
   --line-soft:  #DCCFBC;
   --line-faint: #EBE2D4;
 
@@ -47,10 +50,11 @@
   /* Forma */
   --radius:     6px;
   --radius-sm:  4px;
-  --border:     1.5px;
-  --shadow-sm:  2px 2px 0 0 var(--line);
-  --shadow:     3px 3px 0 0 var(--line);
-  --shadow-lg:  5px 5px 0 0 var(--line);
+  --border:     1px;
+  /* Sombras: casi planas, solo para separar planos (sin desplazamientos duros) */
+  --shadow-sm:  0 1px 0 0 rgba(42, 28, 22, .06);
+  --shadow:     0 1px 2px 0 rgba(42, 28, 22, .06), 0 1px 0 0 rgba(42, 28, 22, .04);
+  --shadow-lg:  0 2px 4px -1px rgba(42, 28, 22, .08), 0 8px 24px -12px rgba(42, 28, 22, .18);
 
   /* Espaciado (múltiplos de 4) */
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;

@@ -2,7 +2,8 @@ import { useAuth } from '../contexts/AuthContext';
 import Icon, { BrandMark } from './Icon';
 
 export default function Header({ page, onCalculator, onInventario, onLoginClick }) {
-  const { user, perfil, loading } = useAuth();
+  const { user, perfil, loading, servidor } = useAuth();
+  const offline = !user && servidor === 'offline';
   const invLabel = user && perfil?.rol === 'admin' ? 'Panel admin' : 'Inventario';
 
   return (
@@ -34,7 +35,9 @@ export default function Header({ page, onCalculator, onInventario, onLoginClick 
           >
             <Icon name="box" size={17} />
             {invLabel}
-            {!user && <Icon name="lock" size={14} className="cv-nav__lock" title="Requiere iniciar sesión" />}
+            {!user && (offline
+              ? <span className="cv-nav__badge" title="El servidor de inventario no responde">Sin conexión</span>
+              : <Icon name="lock" size={14} className="cv-nav__lock" title="Requiere iniciar sesión" />)}
           </button>
         </nav>
 
