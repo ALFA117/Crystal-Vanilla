@@ -1,84 +1,58 @@
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import Icon, { BrandMark } from './Icon';
 
-export default function Header({ onLoginClick, onDashboardClick }) {
+export default function Header({ page, onCalculator, onInventario, onLoginClick }) {
   const { user, perfil, loading } = useAuth();
+  const invLabel = user && perfil?.rol === 'admin' ? 'Panel admin' : 'Inventario';
 
   return (
     <header className="cv-header">
-      <motion.div
-        className="cv-header__inner"
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-      >
-        <motion.span
-          className="cv-header__icon"
-          animate={{ rotate: [0, 8, -8, 8, 0], scale: [1, 1.1, 1, 1.05, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          🌿
-        </motion.span>
+      <div className="cv-header__inner">
+        <a className="cv-brand" href="/" onClick={(e) => { e.preventDefault(); onCalculator(); }}>
+          <BrandMark size={36} />
+          <span className="cv-brand__text">
+            <span className="cv-brand__name">Crystal Vanilla</span>
+            <span className="cv-brand__sub">Calculadora de producción</span>
+          </span>
+        </a>
 
-        <div className="cv-header__text">
-          <h1 className="cv-header__title">Crystal Vanilla</h1>
-          <p className="cv-header__subtitle">Calculadora de Producción</p>
+        <nav className="cv-nav" aria-label="Secciones">
+          <button
+            type="button"
+            className="cv-nav__btn"
+            aria-current={page === 'calculator' ? 'page' : undefined}
+            onClick={onCalculator}
+          >
+            <Icon name="calculator" size={17} />
+            Calculadora
+          </button>
+          <button
+            type="button"
+            className="cv-nav__btn"
+            aria-current={page === 'dashboard' ? 'page' : undefined}
+            onClick={onInventario}
+          >
+            <Icon name="box" size={17} />
+            {invLabel}
+            {!user && <Icon name="lock" size={14} className="cv-nav__lock" title="Requiere iniciar sesión" />}
+          </button>
+        </nav>
+
+        <div className="cv-header__account">
+          {!loading && (user ? (
+            <button type="button" className="cv-account" onClick={onInventario}>
+              <Icon name="user" size={17} />
+              <span className="cv-account__name">{perfil?.nombre?.split(' ')[0] || 'Mi cuenta'}</span>
+              {perfil?.rol && <span className={`cv-role cv-role--${perfil.rol}`}>{perfil.rol}</span>}
+            </button>
+          ) : (
+            <button type="button" className="cv-btn cv-btn--on-dark" onClick={onLoginClick}>
+              <Icon name="login" size={17} />
+              Ingresar
+            </button>
+          ))}
         </div>
-
-        <motion.span
-          className="cv-header__icon cv-header__icon--right"
-          animate={{ rotate: [0, -8, 8, -8, 0], scale: [1, 1.05, 1, 1.1, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-        >
-          🌿
-        </motion.span>
-
-        {/* Botón Ingresar / Panel de usuario */}
-        {!loading && (
-          <AnimatePresence mode="wait">
-            {user ? (
-              <motion.button
-                key="user-btn"
-                className="cv-header__user-btn"
-                onClick={onDashboardClick}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                whileHover={{ scale: 1.06, boxShadow: '0 4px 16px rgba(212,160,23,0.5)' }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="cv-header__user-icon">👤</span>
-                <span className="cv-header__user-name">
-                  {perfil?.nombre?.split(' ')[0] || 'Panel'}
-                </span>
-                <span className={`cv-header__user-rol cv-header__user-rol--${perfil?.rol}`}>
-                  {perfil?.rol || ''}
-                </span>
-              </motion.button>
-            ) : (
-              <motion.button
-                key="login-btn"
-                className="cv-header__login-btn"
-                onClick={onLoginClick}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                whileHover={{ scale: 1.06, boxShadow: '0 4px 16px rgba(212,160,23,0.5)' }}
-                whileTap={{ scale: 0.95 }}
-              >
-                🔐 Ingresar
-              </motion.button>
-            )}
-          </AnimatePresence>
-        )}
-      </motion.div>
-
-      <motion.div
-        className="cv-header__divider"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-      />
+      </div>
     </header>
   );
 }

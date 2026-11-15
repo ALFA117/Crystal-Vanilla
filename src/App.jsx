@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useAuth } from './contexts/AuthContext';
 
-import ParticlesBackground from './components/ParticlesBackground';
 import Header              from './components/Header';
 import ModeSelector        from './components/ModeSelector';
 import InputSection        from './components/InputSection';
 import ResultsGrid         from './components/ResultsGrid';
+import Equivalencias       from './components/Equivalencias';
+import EmptyResults        from './components/EmptyResults';
 import Footer              from './components/Footer';
 import LoginModal          from './components/auth/LoginModal';
 import DashboardPage       from './components/dashboard/DashboardPage';
@@ -16,7 +17,7 @@ import { calculate }       from './utils/calculations';
 import './App.css';
 
 function AppContent() {
-  const { user, perfil } = useAuth();
+  const { user } = useAuth();
   const [page,       setPage]       = useState('calculator');
   const [mode,       setMode]       = useState('litros');
   const [results,    setResults]    = useState(null);
@@ -38,87 +39,84 @@ function AppContent() {
     const res = calculate(mode, value);
     setInputValue(value);
     setResults(res);
-    setTimeout(() => {
-      document.getElementById('cv-results-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
+    // En escritorio el resultado aparece a la derecha; en móvil bajamos hasta él.
+    if (window.matchMedia('(max-width: 959px)').matches) {
+      setTimeout(() => {
+        document.getElementById('cv-results-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
+    }
   };
 
   return (
-    <div className="cv-app">
-      <ParticlesBackground />
+    <MotionConfig reducedMotion="user">
+      <div className="cv-app">
+        <a className="cv-skip" href="#contenido">Saltar al contenido</a>
 
-      <div className="cv-app__content">
         <Header
+          page={page}
+          onCalculator={() => goTo('calculator')}
+          onInventario={handleInventario}
           onLoginClick={() => setShowLogin(true)}
-          onDashboardClick={() => goTo('dashboard')}
         />
 
-        {/* ── Barra de navegación ── */}
-        <nav className="cv-topnav">
-          <motion.button
-            className={`cv-topnav__btn ${page === 'calculator' ? 'cv-topnav__btn--active' : ''}`}
-            onClick={() => goTo('calculator')}
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-          >
-            📊 Calculadora
-          </motion.button>
-
-          <motion.button
-            className={`cv-topnav__btn ${page === 'dashboard' ? 'cv-topnav__btn--active' : ''}`}
-            onClick={handleInventario}
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-          >
-            📦 {user ? (perfil?.rol === 'admin' ? 'Panel Admin' : 'Inventario') : 'Inventario'}
-          </motion.button>
-        </nav>
-
-        <main className="cv-main">
+        <main id="contenido" className="cv-main">
           <AnimatePresence mode="wait">
-
             {page === 'dashboard' ? (
-              <DashboardPage
-                key="dashboard"
-                onBack={() => goTo('calculator')}
-              />
+              <DashboardPage key="dashboard" onBack={() => goTo('calculator')} />
             ) : (
               <motion.div
                 key="calculator"
+                className="cv-workspace"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
               >
-                <motion.div
-                  className="cv-calculator-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
-                >
-                  <ModeSelector activeMode={mode} onModeChange={handleModeChange} />
-                  <InputSection key={mode} mode={mode} onCalculate={handleCalculate} />
-                </motion.div>
+                <aside className="cv-panel" aria-labelledby="cv-calc-title">
+                  <div className="cv-panel__intro">
+                    <p className="cv-eyebrow">Producción y logística</p>
+                    <h1 id="cv-calc-title" className="cv-panel__title">Calculadora de producción</h1>
+                    <p className="cv-panel__lead">
+                      Convierte el extracto disponible en tiendas, cajas, botellas y etiquetas,
+                      o calcula cuánto extracto necesitas para surtir un número de tiendas.
+                    </p>
+                  </div>
 
-                <div id="cv-results-anchor" />
+                  <div className="cv-panel__form">
+                    <ModeSelector activeMode={mode} onModeChange={handleModeChange} />
+                    <InputSection key={mode} mode={mode} onCalculate={handleCalculate} />
+                  </div>
+                </aside>
 
-                <ResultsGrid
-                  results={results}
-                  mode={mode}
-                  inputValue={inputValue}
-                  onInventario={handleInventario}
-                />
+                <section className="cv-output" aria-live="polite" aria-label="Resultado">
+                  <div id="cv-results-anchor" className="cv-anchor" />
+                  {results ? (
+                    <ResultsGrid
+                      key={`${mode}-${inputValue}`}
+                      results={results}
+                      mode={mode}
+                      inputValue={inputValue}
+                    />
+                  ) : (
+                    <EmptyResults mode={mode} />
+                  )}
+                </section>
+
+                <div className="cv-aside-ref">
+                  <Equivalencias />
+                </div>
               </motion.div>
             )}
-
           </AnimatePresence>
         </main>
 
         <Footer />
-      </div>
 
-      <AnimatePresence>
-        {showLogin && <LoginModal key="login-modal" onClose={() => setShowLogin(false)} />}
-      </AnimatePresence>
-    </div>
+        <AnimatePresence>
+          {showLogin && <LoginModal key="login-modal" onClose={() => setShowLogin(false)} />}
+        </AnimatePresence>
+      </div>
+    </MotionConfig>
   );
 }
 
