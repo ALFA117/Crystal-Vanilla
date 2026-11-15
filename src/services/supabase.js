@@ -17,6 +17,27 @@ try {
 
 export { supabase };
 
+/**
+ * Revisa si el servidor de inventario responde (sin iniciar sesión).
+ * Devuelve 'ok' o 'offline'. La calculadora no depende de esto.
+ */
+export async function checkServidor(timeoutMs = 6000) {
+  if (!supabase) return 'offline';
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/health`, {
+      headers: { apikey: SUPABASE_ANON },
+      signal: ctrl.signal,
+    });
+    return res.status < 500 ? 'ok' : 'offline';
+  } catch {
+    return 'offline';
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
 // Si el servidor no contesta, decirlo tal cual en vez de "usuario no encontrado"

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, getPerfil, registrarLog, updatePerfil, loginWithEmailOrUsername, signOut } from '../services/supabase';
+import { supabase, checkServidor, getPerfil, registrarLog, updatePerfil, loginWithEmailOrUsername, signOut } from '../services/supabase';
 
 const AuthContext = createContext(null);
 
@@ -7,6 +7,14 @@ export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null);
   const [perfil,  setPerfil]  = useState(null);
   const [loading, setLoading] = useState(true);
+  // 'checking' | 'ok' | 'offline' — estado del servidor de inventario
+  const [servidor, setServidor] = useState('checking');
+
+  useEffect(() => {
+    let vivo = true;
+    checkServidor().then((st) => { if (vivo) setServidor(st); });
+    return () => { vivo = false; };
+  }, []);
 
   useEffect(() => {
     // Si Supabase no está configurado, no intentar conectar
@@ -58,7 +66,7 @@ export function AuthProvider({ children }) {
   const isAdmin = perfil?.rol === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, perfil, loading, isAdmin, login, logout, cargarPerfil }}>
+    <AuthContext.Provider value={{ user, perfil, loading, servidor, isAdmin, login, logout, cargarPerfil }}>
       {children}
     </AuthContext.Provider>
   );
