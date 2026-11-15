@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MODES } from './ModeSelector';
 import Icon from './Icon';
 
-export default function InputSection({ mode, onCalculate }) {
+export default function InputSection({ mode, onCalculate, onDraftChange }) {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
@@ -29,6 +29,7 @@ export default function InputSection({ mode, onCalculate }) {
     // Solo enteros — elimina cualquier carácter que no sea dígito
     const v = e.target.value.replace(/[^0-9]/g, '');
     setValue(v);
+    onDraftChange?.(v);
     if (error) setError('');
   };
 

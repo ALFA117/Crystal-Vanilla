@@ -23,6 +23,7 @@ function AppContent() {
   const [results,    setResults]    = useState(null);
   const [inputValue, setInputValue] = useState(null);
   const [showLogin,  setShowLogin]  = useState(false);
+  const [draft,      setDraft]      = useState('');
 
   const goTo = (dest) => { setPage(dest); window.scrollTo({ top: 0 }); };
 
@@ -32,12 +33,13 @@ function AppContent() {
   };
 
   const handleModeChange = (newMode) => {
-    setMode(newMode); setResults(null); setInputValue(null);
+    setMode(newMode); setResults(null); setInputValue(null); setDraft('');
   };
 
   const handleCalculate = (value) => {
     const res = calculate(mode, value);
     setInputValue(value);
+    setDraft(String(value));
     setResults(res);
     // En escritorio el resultado aparece a la derecha; en móvil bajamos hasta él.
     if (window.matchMedia('(max-width: 959px)').matches) {
@@ -84,7 +86,7 @@ function AppContent() {
 
                   <div className="cv-panel__form">
                     <ModeSelector activeMode={mode} onModeChange={handleModeChange} />
-                    <InputSection key={mode} mode={mode} onCalculate={handleCalculate} />
+                    <InputSection key={mode} mode={mode} onCalculate={handleCalculate} onDraftChange={setDraft} />
                   </div>
                 </aside>
 
@@ -96,6 +98,7 @@ function AppContent() {
                       results={results}
                       mode={mode}
                       inputValue={inputValue}
+                      stale={draft !== String(inputValue)}
                     />
                   ) : (
                     <EmptyResults mode={mode} />

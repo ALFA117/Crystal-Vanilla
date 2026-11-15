@@ -4,7 +4,7 @@ import Icon from './Icon';
 
 const fmt = (n) => Number(n).toLocaleString('es-MX');
 
-/** Valor exacto del paquete: "5.5" o "11" (entero). */
+/** Valor exacto del paquete: "4.95" o "11" (entero). */
 function fmtExact(exact) {
   const rounded = parseFloat(exact.toFixed(4));
   if (Number.isInteger(rounded)) return rounded.toLocaleString('es-MX');
@@ -22,16 +22,9 @@ const block = (i) => ({
   transition: { duration: 0.28, delay: 0.04 * i, ease: 'easeOut' },
 });
 
-function Status({ tone, icon, children }) {
-  return (
-    <p className={`cv-status cv-status--${tone}`}>
-      <Icon name={icon} size={16} strokeWidth={2} />
-      <span>{children}</span>
-    </p>
-  );
-}
+const plural = (n, uno, varios) => (Number(n) === 1 ? uno : varios);
 
-export default function ResultsGrid({ results, mode, inputValue }) {
+export default function ResultsGrid({ results, mode, inputValue, stale = false }) {
   if (!results) return null;
 
   const isLitros = mode === 'litros';
@@ -42,50 +35,35 @@ export default function ResultsGrid({ results, mode, inputValue }) {
   };
 
   const exactLitros = isLitros && results.litrosSobrantes === 0;
-  const tiendasShown = isLitros
-    ? (exactLitros ? results.tiendas : results.tiendasCompletas)
-    : results.tiendas;
+  // Tiendas que realmente se surten: en modo litros, solo las completas.
+  const tiendasBase = isLitros ? results.tiendasCompletas : results.tiendas;
+  const siguiente = results.tiendas; // número de la tienda incompleta (modo litros)
 
-  // ── Filas de materiales (mismos datos que la versión anterior) ──
+  // ── Materiales: una fila por material, con su empaque ──
   const rows = [
-    {
-      key: 'cajasTotal',
-      icon: 'box',
-      label: 'Cajas totales',
-      qty: results.cajasTotal,
-      unit: isLitros ? `cajas (${fmt(results.tiendasCompletas)} tiendas)` : 'cajas',
-      note: isLitros && results.cajasPartial != null && results.cajasFaltan > 0
-        ? `Tienda ${results.tiendas}: tienes ${results.cajasPartial} · faltan ${results.cajasFaltan} cajas`
-        : null,
-    },
-    { key: 'paquetesCajas', icon: 'layers', label: 'Paquetes de cajas', unit: 'paquetes',
-      note: '20 cajas (charolas) por paquete', pkg: results.paquetesCajas },
-    {
-      key: 'botellasTotal',
-      icon: 'bottle',
-      label: 'Botellas totales',
-      qty: results.botellasTotal,
-      unit: isLitros ? `botellas (${fmt(results.tiendasCompletas)} tiendas)` : 'botellas',
-      note: isLitros && results.botellasPartial != null && results.bolsasFaltan > 0
-        ? `Tienda ${results.tiendas}: tienes ${results.botellasPartial} · faltan ${results.bolsasFaltan} botellas`
-        : null,
-    },
-    { key: 'bolsasBotellas', icon: 'bag', label: 'Bolsas de botellas', unit: 'bolsas',
-      note: '200 botellas por bolsa', pkg: results.bolsasBotellas },
-    { key: 'rollosEtiquetas', icon: 'tag', label: 'Rollos de etiquetas', unit: 'rollos',
-      note: '1,000 etiquetas por rollo', pkg: results.rollosEtiquetas },
+    { key: 'cajas',     icon: 'box',    label: 'Cajas (charolas)', pkgNote: '20 cajas por paquete',
+      total: results.cajasTotal,    unit: 'cajas',     pkg: results.paquetesCajas,   pkgUnit: ['paquete', 'paquetes'] },
+    { key: 'botellas',  icon: 'bottle', label: 'Botellas',         pkgNote: '200 botellas por bolsa',
+      total: results.botellasTotal, unit: 'botellas',  pkg: results.bolsasBotellas,  pkgUnit: ['bolsa', 'bolsas'] },
+    { key: 'etiquetas', icon: 'tag',    label: 'Etiquetas',        pkgNote: '1,000 etiquetas por rollo',
+      total: results.botellasTotal, unit: 'etiquetas', pkg: results.rollosEtiquetas, pkgUnit: ['rollo', 'rollos'] },
   ];
 
   return (
-    <motion.div className="cv-results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+    <motion.div
+      className={`cv-results ${stale ? 'is-stale' : ''}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       {/* ── Encabezado ── */}
       <div className="cv-results__head">
         <div>
           <p className="cv-eyebrow">Orden de producción</p>
           <h2 className="cv-results__title">
             {isLitros
-              ? <>Para <span className="cv-num">{fmt(inputValue)}</span> litros disponibles</>
-              : <>Para surtir <span className="cv-num">{fmt(inputValue)}</span> {Number(inputValue) === 1 ? 'tienda' : 'tiendas'}</>}
+              ? <>{fmt(inputValue)} litros disponibles</>
+              : <>Surtir {fmt(inputValue)} {plural(inputValue, 'tienda', 'tiendas')}</>}
           </h2>
         </div>
         <button type="button" className="cv-btn cv-btn--dark" onClick={handlePDF}>
@@ -94,152 +72,156 @@ export default function ResultsGrid({ results, mode, inputValue }) {
         </button>
       </div>
 
+      {stale && (
+        <p className="cv-stale" role="status">
+          <Icon name="info" size={16} />
+          <span>
+            Este resultado es de {fmt(inputValue)} {isLitros ? 'litros' : plural(inputValue, 'tienda', 'tiendas')}.
+            Cambiaste el dato: pulsa <strong>Calcular producción</strong> para actualizarlo.
+          </span>
+        </p>
+      )}
+
       <div className="cv-bento">
         {/* ── Tiendas (dato principal) ── */}
         <motion.article className="cv-tile cv-tile--hero" {...block(0)}>
           <header className="cv-tile__head">
             <Icon name="store" size={18} />
-            <h3>{isLitros ? 'Tiendas completas' : 'Tiendas'}</h3>
+            <h3>{isLitros ? 'Tiendas completas' : 'Tiendas a surtir'}</h3>
           </header>
-          <p className="cv-tile__big"><Counter value={tiendasShown} /></p>
-          <p className="cv-tile__unit">tiendas · 110 litros c/u</p>
-          {isLitros && (exactLitros ? (
-            <Status tone="ok" icon="checkCircle">Litros exactos: no falta ni sobra extracto.</Status>
-          ) : (
-            <Status tone="warn" icon="alert">
-              Faltan {fmt(results.litrosFaltantes)} litros / {Math.ceil(results.litrosFaltantes / 10)} cajas
-              para completar {fmt(results.tiendas)} tiendas.
-            </Status>
-          ))}
+          <p className="cv-tile__big"><Counter value={tiendasBase} /></p>
+          <p className="cv-tile__unit">
+            {plural(tiendasBase, 'tienda', 'tiendas')} de 110 litros · 11 cajas · 220 botellas c/u
+          </p>
+          {exactLitros && (
+            <p className="cv-status cv-status--ok">
+              <Icon name="checkCircle" size={16} strokeWidth={2} />
+              <span>Litros exactos: no sobra ni falta extracto.</span>
+            </p>
+          )}
         </motion.article>
 
         {/* ── Extracto ── */}
         <motion.article className="cv-tile cv-tile--ink" {...block(1)}>
           <header className="cv-tile__head">
             <Icon name="droplet" size={18} />
-            <h3>Litros de extracto</h3>
+            <h3>Extracto</h3>
           </header>
           <p className="cv-tile__big">
             <Counter value={isLitros ? Number(inputValue) : results.litrosTotales} />
           </p>
           <p className="cv-tile__unit">{isLitros ? 'litros disponibles' : 'litros necesarios'}</p>
-          {isLitros && (
+          {isLitros && !exactLitros && (
             <p className="cv-tile__note">
-              {results.litrosFaltantes === 0
-                ? `Exacto para ${fmt(results.tiendas)} tiendas`
-                : `Necesitas ${fmt(results.litrosTotales)} · faltan ${fmt(results.litrosFaltantes)} litros`}
+              {fmt(results.tiendasCompletas * 110)} litros se usan en las tiendas completas.
             </p>
           )}
         </motion.article>
 
-        {/* ── Faltan / sobran (solo modo litros) ── */}
-        {isLitros && (
-          <>
-            <motion.article
-              className={`cv-tile cv-tile--half ${results.litrosFaltantes === 0 ? 'cv-tile--ok' : 'cv-tile--warn'}`}
-              {...block(2)}
-            >
-              <header className="cv-tile__head">
-                <Icon name={results.litrosFaltantes === 0 ? 'checkCircle' : 'minusCircle'} size={18} />
-                <h3>
-                  {results.litrosFaltantes === 0
-                    ? 'Litros exactos'
-                    : `Para completar ${fmt(results.tiendas)} tiendas te faltan`}
-                </h3>
-              </header>
-              <p className="cv-tile__mid">{fmt(results.litrosFaltantes)} <span>litros</span></p>
-              {results.litrosFaltantes > 0 && (
-                <p className="cv-tile__note">
-                  Tienes {fmt(inputValue)}, necesitas {fmt(results.litrosTotales)}.
+        {/* ── Balance (solo si los litros no cierran en tiendas completas) ── */}
+        {isLitros && !exactLitros && (
+          <motion.article className="cv-tile cv-tile--full cv-balance" {...block(2)}>
+            <header className="cv-tile__head">
+              <Icon name="ruler" size={18} />
+              <h3>Balance de extracto</h3>
+            </header>
+            <div className="cv-balance__grid">
+              <div className="cv-balance__item">
+                <p className="cv-balance__label">
+                  Sobrante tras {fmt(results.tiendasCompletas)} {plural(results.tiendasCompletas, 'tienda', 'tiendas')}
                 </p>
-              )}
-            </motion.article>
-
-            <motion.article
-              className={`cv-tile cv-tile--half ${results.litrosSobrantes === 0 ? 'cv-tile--ok' : 'cv-tile--neutral'}`}
-              {...block(3)}
-            >
-              <header className="cv-tile__head">
-                <Icon name={results.litrosSobrantes === 0 ? 'checkCircle' : 'plusCircle'} size={18} />
-                <h3>
-                  {results.litrosSobrantes === 0
-                    ? 'Sin excedente'
-                    : `Sobran con ${fmt(results.tiendasCompletas)} tiendas`}
-                </h3>
-              </header>
-              <p className="cv-tile__mid">{fmt(results.litrosSobrantes)} <span>litros</span></p>
-              {results.litrosSobrantes > 0 && (
-                <p className="cv-tile__note">
-                  {fmt(results.tiendasCompletas)} tiendas completas usan {fmt(results.tiendasCompletas * 110)} litros.
+                <p className="cv-balance__value">{fmt(results.litrosSobrantes)} <span>litros</span></p>
+                <p className="cv-balance__note">
+                  {results.cajasPartial > 0
+                    ? `Alcanza para ${results.cajasPartial} de las 11 cajas de la tienda ${siguiente}.`
+                    : 'No alcanza para una caja completa de 10 litros.'}
                 </p>
-              )}
-            </motion.article>
-          </>
+              </div>
+              <div className="cv-balance__item cv-balance__item--warn">
+                <p className="cv-balance__label">
+                  <Icon name="alert" size={16} strokeWidth={2} />
+                  Faltan para completar la tienda {siguiente}
+                </p>
+                <p className="cv-balance__value">{fmt(results.litrosFaltantes)} <span>litros</span></p>
+                <p className="cv-balance__note">
+                  Equivale a {results.cajasFaltan} {plural(results.cajasFaltan, 'caja', 'cajas')} de 10 litros.
+                </p>
+              </div>
+            </div>
+          </motion.article>
         )}
 
         {/* ── Materiales ── */}
-        <motion.article className="cv-tile cv-tile--full cv-materials" {...block(4)}>
+        <motion.article className="cv-tile cv-tile--full cv-materials" {...block(3)}>
           <header className="cv-tile__head cv-materials__head">
             <Icon name="list" size={18} />
             <h3>Materiales</h3>
-            <span className="cv-materials__hint">Paquetes redondeados hacia arriba</span>
+            <span className="cv-materials__hint">
+              Para {fmt(tiendasBase)} {plural(tiendasBase, 'tienda completa', 'tiendas completas')} · empaques redondeados hacia arriba
+            </span>
           </header>
 
           <table className="cv-table">
+            <colgroup>
+              <col className="cv-col--concept" />
+              <col /><col /><col /><col />
+            </colgroup>
             <thead>
               <tr>
-                <th scope="col">Concepto</th>
-                <th scope="col" className="is-num">Cantidad</th>
-                <th scope="col" className="is-num">Exacto</th>
-                <th scope="col" className="is-num">Usas del último</th>
-                <th scope="col" className="is-num">Sobran</th>
+                <th scope="col">Material</th>
+                <th scope="col" className="is-num">Piezas</th>
+                <th scope="col" className="is-num">Empaques</th>
+                <th scope="col" className="is-num">Del último</th>
+                <th scope="col" className="is-num">Sobrante</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => {
                 const p = r.pkg;
+                const [uno, varios] = r.pkgUnit;
                 return (
-                  <tr key={r.key} className={p ? 'is-pkg' : 'is-total'}>
+                  <tr key={r.key}>
                     <th scope="row">
                       <span className="cv-table__concept">
                         <span className="cv-table__icon"><Icon name={r.icon} size={17} /></span>
                         <span>
                           <span className="cv-table__label">{r.label}</span>
-                          {r.note && <span className={`cv-table__note ${p ? '' : 'is-warn'}`}>{r.note}</span>}
+                          <span className="cv-table__note">{r.pkgNote}</span>
                         </span>
                       </span>
                     </th>
-                    <td className="is-num" data-label="Cantidad">
+                    <td className="is-num" data-label="Piezas">
                       <span className="cv-cell">
-                        <strong className="cv-table__qty">{fmt(p ? p.needed : r.qty)}</strong>
+                        <span className="cv-table__val">{fmt(r.total)}</span>
                         <span className="cv-table__unit">{r.unit}</span>
                       </span>
                     </td>
-                    <td className={`is-num ${p ? '' : 'is-na'}`} data-label="Exacto">
-                      {p ? (
-                        <span className="cv-cell">
+                    <td className="is-num" data-label="Empaques">
+                      <span className="cv-cell">
+                        <strong className="cv-table__qty">{fmt(p.needed)}</strong>
+                        <span className="cv-table__unit">
+                          {plural(p.needed, uno, varios)}
                           {p.isExact
-                            ? <span className="cv-exact"><Icon name="check" size={14} strokeWidth={2.5} title="Exacto" /> {fmtExact(p.exact)}</span>
-                            : <span>{fmtExact(p.exact)}</span>}
-                          <span className="cv-table__unit">{p.isExact ? 'exacto' : r.unit}</span>
+                            ? <span className="cv-exact"> · exacto</span>
+                            : <> · {fmtExact(p.exact)} exactos</>}
                         </span>
-                      ) : <span className="cv-na" aria-label="No aplica">—</span>}
+                      </span>
                     </td>
-                    <td className={`is-num ${p && !p.isExact ? '' : 'is-na'}`} data-label="Usas del último">
-                      {p && !p.isExact ? (
-                        <span className="cv-cell">
-                          <span className="cv-good">{fmt(p.usedInLast)}</span>
-                          <span className="cv-table__unit">{p.itemUnit}</span>
-                        </span>
-                      ) : <span className="cv-na" aria-label="No aplica">—</span>}
+                    <td className="is-num" data-label="Del último">
+                      <span className="cv-cell">
+                        <span className="cv-table__val">{fmt(p.usedInLast)}</span>
+                        <span className="cv-table__unit">de {fmt(p.perPkg)} {r.unit}</span>
+                      </span>
                     </td>
-                    <td className={`is-num ${p && !p.isExact ? '' : 'is-na'}`} data-label="Sobran">
-                      {p && !p.isExact ? (
-                        <span className="cv-cell">
-                          <span className="cv-left">{fmt(p.leftover)}</span>
-                          <span className="cv-table__unit">{p.itemUnit}</span>
-                        </span>
-                      ) : <span className="cv-na" aria-label="No aplica">—</span>}
+                    <td className="is-num" data-label="Sobrante">
+                      <span className="cv-cell">
+                        {p.leftover === 0
+                          ? <span className="cv-table__none">Ninguno</span>
+                          : <>
+                              <span className="cv-table__val">{fmt(p.leftover)}</span>
+                              <span className="cv-table__unit">{r.unit}</span>
+                            </>}
+                      </span>
                     </td>
                   </tr>
                 );
