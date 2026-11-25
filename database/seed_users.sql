@@ -13,12 +13,12 @@ SELECT id, email, created_at FROM auth.users ORDER BY created_at;
 INSERT INTO public.usuarios (id, nombre, username, rol, activo)
 SELECT
   au.id,
-  'Aldo Gaya',
-  'AldoGaya2026',
+  'Administrador',
+  'admin',
   'admin',
   true
 FROM auth.users au
-WHERE au.email = 'aldogaya@crystalvanilla.com'
+WHERE au.email = 'usuario1@ejemplo.com'
 ON CONFLICT (id) DO UPDATE SET
   nombre   = EXCLUDED.nombre,
   username = EXCLUDED.username,
@@ -29,12 +29,12 @@ ON CONFLICT (id) DO UPDATE SET
 INSERT INTO public.usuarios (id, nombre, username, rol, activo)
 SELECT
   au.id,
-  'Eulalio Lopez',
-  'EULALIO2026',
+  'Empleado',
+  'empleado',
   'empleado',
   true
 FROM auth.users au
-WHERE au.email = 'eulaliolopez@crystalvanilla.com'
+WHERE au.email = 'usuario2@ejemplo.com'
 ON CONFLICT (id) DO UPDATE SET
   nombre   = EXCLUDED.nombre,
   username = EXCLUDED.username,
@@ -56,6 +56,6 @@ ORDER BY u.rol DESC;
 -- ── Si el SELECT de arriba sigue vacío: ──────────────────────────────────────
 -- Significa que los emails no existen en auth.users.
 -- Ve a: Authentication → Users y confirma que existen exactamente:
---   aldogaya@crystalvanilla.com
---   eulaliolopez@crystalvanilla.com
+--   usuario1@ejemplo.com
+--   usuario2@ejemplo.com
 -- Con esos emails exactos (sin espacios extra).

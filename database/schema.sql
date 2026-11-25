@@ -178,16 +178,16 @@ INSERT INTO public.almacen (identificador_almacen, paquetes_botellas, paquetes_c
 VALUES ('Principal', 400, 800, 30, 30)
 ON CONFLICT DO NOTHING;
 
--- ── 10. INSTRUCCIONES USUARIO INICIAL (Aldo Gaya) ────────────────────────────
+-- ── 10. INSTRUCCIONES USUARIO INICIAL (administrador) ────────────────────────────
 --
 --  PASO 1: Ir a Supabase Dashboard → Authentication → Users → Add User
---  PASO 2: Email: aldogaya@crystalvanilla.com  |  Password: (elige una nueva, no la reuses de otro sitio)
+--  PASO 2: Email: usuario1@ejemplo.com  |  Password: (elige una nueva, no la reuses de otro sitio)
 --  PASO 3: Después de crearlo, ejecutar este UPDATE:
 --
 --    UPDATE public.usuarios
---    SET nombre = 'Aldo Gaya', username = 'aldogaya', rol = 'admin'
+--    SET nombre = 'Administrador', username = 'admin', rol = 'admin'
 --    FROM auth.users au
 --    WHERE usuarios.id = au.id
---      AND au.email = 'aldogaya@crystalvanilla.com';
+--      AND au.email = 'usuario1@ejemplo.com';
 --
 -- ─────────────────────────────────────────────────────────────────────────────

@@ -11,12 +11,12 @@ DROP TABLE IF EXISTS public.usuarios CASCADE;
 DROP TABLE IF EXISTS public.almacen  CASCADE;
 
 DELETE FROM auth.identities WHERE provider_id IN (
-  'aldogaya@crystalvanilla.internal',
-  'eulalio@crystalvanilla.internal'
+  'admin@crystalvanilla.internal',
+  'empleado@crystalvanilla.internal'
 );
 DELETE FROM auth.users WHERE email IN (
-  'aldogaya@crystalvanilla.internal',
-  'eulalio@crystalvanilla.internal'
+  'admin@crystalvanilla.internal',
+  'empleado@crystalvanilla.internal'
 );
 
 -- ── 2. Tablas ────────────────────────────────────────────────────────────────
@@ -168,20 +168,20 @@ DECLARE
 BEGIN
   -- Admin: reemplaza CAMBIA_ESTA_PASSWORD_ADMIN por una password real antes de correr este script.
   INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-  VALUES (uid_admin, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'aldogaya@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_ADMIN', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Aldo Gaya","username":"AldoGaya2026","rol":"admin"}', now(), now(), '', '', '', '');
+  VALUES (uid_admin, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_ADMIN', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Administrador","username":"admin","rol":"admin"}', now(), now(), '', '', '', '');
   INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
-  VALUES (uid_admin, uid_admin, 'aldogaya@crystalvanilla.internal', json_build_object('sub', uid_admin, 'email', 'aldogaya@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
+  VALUES (uid_admin, uid_admin, 'admin@crystalvanilla.internal', json_build_object('sub', uid_admin, 'email', 'admin@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
   INSERT INTO public.usuarios (id, nombre, username, rol, activo)
-  VALUES (uid_admin, 'Aldo Gaya', 'AldoGaya2026', 'admin', true)
+  VALUES (uid_admin, 'Administrador', 'admin', 'admin', true)
   ON CONFLICT (id) DO UPDATE SET nombre=EXCLUDED.nombre, username=EXCLUDED.username, rol=EXCLUDED.rol, activo=EXCLUDED.activo;
 
   -- Empleado: reemplaza CAMBIA_ESTA_PASSWORD_EMPLEADO por una password real antes de correr este script.
   INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-  VALUES (uid_emp, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'eulalio@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_EMPLEADO', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Eulalio Lopez","username":"EULALIO2026","rol":"empleado"}', now(), now(), '', '', '', '');
+  VALUES (uid_emp, '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'empleado@crystalvanilla.internal', crypt('CAMBIA_ESTA_PASSWORD_EMPLEADO', gen_salt('bf')), now(), now(), '{"provider":"email","providers":["email"]}', '{"nombre":"Empleado","username":"empleado","rol":"empleado"}', now(), now(), '', '', '', '');
   INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
-  VALUES (uid_emp, uid_emp, 'eulalio@crystalvanilla.internal', json_build_object('sub', uid_emp, 'email', 'eulalio@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
+  VALUES (uid_emp, uid_emp, 'empleado@crystalvanilla.internal', json_build_object('sub', uid_emp, 'email', 'empleado@crystalvanilla.internal', 'email_verified', true), 'email', now(), now(), now());
   INSERT INTO public.usuarios (id, nombre, username, rol, activo)
-  VALUES (uid_emp, 'Eulalio Lopez', 'EULALIO2026', 'empleado', true)
+  VALUES (uid_emp, 'Empleado', 'empleado', 'empleado', true)
   ON CONFLICT (id) DO UPDATE SET nombre=EXCLUDED.nombre, username=EXCLUDED.username, rol=EXCLUDED.rol, activo=EXCLUDED.activo;
 END $$;
 
